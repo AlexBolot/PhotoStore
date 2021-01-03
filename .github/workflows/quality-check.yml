@@ -13,9 +13,11 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  code_quality:
+    name: 'Code quality'
+
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -23,10 +25,13 @@ jobs:
       - uses: actions/checkout@v2
 
       # Setup Java environment in order to build the Android app.
-      - uses: actions/checkout@v1
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
+
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r21d
 
       # Setup the flutter environment.
       - uses: subosito/flutter-action@v1
@@ -40,8 +45,32 @@ jobs:
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
 
-      # Run widget tests for our flutter project.
-      - run: flutter test
+  build:
+    name: 'Build'
+    needs: code_quality
+
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r21d
+
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
+
+      # Get flutter dependencies.
+      - run: flutter pub get
 
       # Build apk.
       - run: flutter build apk --target-platform android-arm64
