@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/3/21 11:39 PM
+ . Last modified : 1/3/21 11:49 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -21,11 +21,13 @@ class PhotoStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String applicationName = 'Photo Store';
-    buildSplashScreen() =>
-        SplashScreen(title: applicationName, nextRouteName: '/', // TODO - add route to the main page here,
-            loadFunctions: [
-              // TODO - add loading function here
-            ]);
+    buildSplashScreen() => SplashScreen(
+          title: applicationName,
+          nextRouteName: '/', // TODO - add route to the main page here,
+          loadFunctions: [
+            // TODO - add loading function here
+          ],
+        );
 
     return MaterialApp(
       title: applicationName,
