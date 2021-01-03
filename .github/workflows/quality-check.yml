@@ -2,11 +2,13 @@ name: Quality Check
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push or pull request events for any branch
   push:
-    branches: [ master ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ master ]
+    branches:
+      - '**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -45,4 +47,4 @@ jobs:
       - run: flutter test
 
       # Build apk.
-      #- run: flutter build app
+      - run: flutter build apk --target-platform android-arm64
