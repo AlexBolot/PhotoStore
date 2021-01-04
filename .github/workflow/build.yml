@@ -1,0 +1,53 @@
+#...............................................................................
+# Copyright (c)
+#
+# The build workflow was created by : Alex Bolot and Pierre Bolot
+# As part of the PhotoStore project
+#
+# Last modified : 04/01/2021 01:51
+#
+# Contact : contact.alexandre.bolot@gmail.com
+#...............................................................................
+
+name: Build
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events for any branch
+  push:
+    branches:
+      - '**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    - name : 'Build Android App'
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r21d
+
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
+
+      # Get flutter dependencies.
+      - run: flutter pub get
+
+      # Build apk.
+      - run: flutter build apk --target-platform android-arm64
