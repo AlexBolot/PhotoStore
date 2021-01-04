@@ -26,6 +26,7 @@ dependencies:
 
   cupertino_icons: ^1.0.0
   flutter_stash:
+  photo_manager: ^0.5.8
 
 dev_dependencies:
   flutter_test:

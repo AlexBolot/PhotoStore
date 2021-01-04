@@ -5,13 +5,15 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/3/21 11:49 PM
+ . Last modified : 1/4/21 3:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_store/views/grid_view.dart';
 
 void main() {
   runApp(PhotoStore());
@@ -23,9 +25,9 @@ class PhotoStore extends StatelessWidget {
     String applicationName = 'Photo Store';
     buildSplashScreen() => SplashScreen(
           title: applicationName,
-          nextRouteName: '/', // TODO - add route to the main page here,
+          nextRouteName: PhotoGridView.routeName,
           loadFunctions: [
-            // TODO - add loading function here
+            () async => await PhotoManager.requestPermission(),
           ],
         );
 
@@ -35,7 +37,7 @@ class PhotoStore extends StatelessWidget {
       routes: {
         '/': (context) => buildSplashScreen(),
         SplashScreen.routeName: (context) => buildSplashScreen(),
-        // TODO - add more routes here
+        PhotoGridView.routeName: (context) => PhotoGridView()
       },
     );
   }

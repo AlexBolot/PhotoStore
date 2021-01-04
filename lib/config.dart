@@ -5,17 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/3/21 11:49 PM
+ . Last modified : 1/4/21 10:07 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:flutter/material.dart';
-
-//========== Page Routes ==========//
-
-// TODO - add page routes here
-// Example : String get accountView => '/AccountView';
 
 //========== FormFields Validators ==========//
 
