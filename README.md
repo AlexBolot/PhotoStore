@@ -1,4 +1,4 @@
-# photo_store
+# photo_store ![GitHub branch checks state](https://img.shields.io/github/checks-status/AlexBolot/PhotoStore/master)
 
 A new Flutter application.
 
