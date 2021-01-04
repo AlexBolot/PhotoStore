@@ -1,4 +1,4 @@
-# photo_store
+# photo_store ![example branch parameter](https://github.com/AlexBolot/PhotoStore/workflows/Quality%20Check/badge.svg?branch=master)
 
 A new Flutter application.
 
