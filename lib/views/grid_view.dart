@@ -13,7 +13,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/widgets/photo_widget.dart';
+import 'package:photo_store/widgets/album_widget.dart';
 
 class PhotoGridView extends StatefulWidget {
   /// Use this for easier access from Named-Routes navigation
@@ -46,7 +46,7 @@ class _PhotoGridViewState extends State<PhotoGridView> {
       body: GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.all(8),
-        children: assets.map((asset) => PhotoWidget(asset: asset)).toList(),
+        children: assets.map((asset) => AlbumWidget(asset: asset)).toList(),
       ),
     );
   }

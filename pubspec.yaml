@@ -27,6 +27,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   flutter_stash:
   photo_manager: ^0.5.8
+  video_player: ^0.11.1+2
 
 dev_dependencies:
   flutter_test:
