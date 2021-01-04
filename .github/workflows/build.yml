@@ -39,9 +39,9 @@ jobs:
         with:
           java-version: '12.x'
 
-      - uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r21d
+      #- uses: nttld/setup-ndk@v1
+      #  with:
+      #    ndk-version: r21d
 
       # Setup the flutter environment.
       - uses: subosito/flutter-action@v1
