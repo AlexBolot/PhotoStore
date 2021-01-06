@@ -1,11 +1,11 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The grid_view.dart class was created by : Alex Bolot and Pierre Bolot
+ . The photo_grid_view.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/4/21 3:49 PM
+ . Last modified : 1/6/21 6:01 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,6 +13,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_store/model/Album.dart';
 import 'package:photo_store/widgets/album_widget.dart';
 
 class PhotoGridView extends StatefulWidget {
@@ -29,7 +30,7 @@ class PhotoGridView extends StatefulWidget {
 }
 
 class _PhotoGridViewState extends State<PhotoGridView> {
-  List<AssetEntity> assets = [];
+  List<Album> albums = [];
 
   @override
   void initState() {
@@ -46,21 +47,24 @@ class _PhotoGridViewState extends State<PhotoGridView> {
       body: GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.all(8),
-        children: assets.map((asset) => AlbumWidget(asset: asset)).toList(),
+        children: albums.map((album) => AlbumWidget(album: album)).toList(),
       ),
     );
   }
 
   _fetchAssets() async {
-    // Set onlyAll to true, to fetch only the 'Recent' album
-    // which contains all the photos/videos in the storage
-    final albums = await PhotoManager.getAssetPathList(onlyAll: true);
-    final recentAlbum = albums.first;
+    final assetPathList = await PhotoManager.getAssetPathList();
 
-    // Now that we got the album, fetch all the assets it contains
-    final recentAssets = await recentAlbum.getAssetListRange(start: 0, end: 15);
+    List<Album> result = [];
 
-    // Update the state and notify UI
-    setState(() => assets = recentAssets);
+    for (AssetPathEntity entity in assetPathList) {
+      var assets = await entity.getAssetListRange(start: 0, end: 10000);
+
+      var album = new Album(name: entity.name, items: assets, thumbnail: assets.first);
+
+      result.add(album);
+    }
+
+    setState(() => albums = result..sort((a, b) => a.name.compareTo(b.name)));
   }
 }

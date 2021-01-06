@@ -5,13 +5,14 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/4/21 4:38 PM
+ . Last modified : 1/6/21 6:01 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
@@ -81,12 +82,20 @@ class VideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<VideoScreen> {
   VideoPlayerController _controller;
-  bool initialized = false;
 
   @override
   void initState() {
-    _initVideo();
+    _initController();
     super.initState();
+  }
+
+  _initController() async {
+    _controller = VideoPlayerController.file(await widget.file);
+
+    _controller.addListener(() => setState(() {}));
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
   }
 
   @override
@@ -95,50 +104,59 @@ class _VideoScreenState extends State<VideoScreen> {
     super.dispose();
   }
 
-  _initVideo() async {
-    final video = await widget.file;
-    _controller = VideoPlayerController.file(video)
-      // Play the video again when it ends
-      ..setLooping(true)
-      // initialize the controller and notify UI when done
-      ..initialize().then((_) => setState(() => initialized = true));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: initialized
-          // If the video is initialized, display it
-          ? Scaffold(
-              body: Center(
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  // Use the VideoPlayer widget to display the video.
-                  child: VideoPlayer(_controller),
+      body: SafeArea(
+        child: Container(
+          color: Colors.black,
+          alignment: Alignment.center,
+          child: AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                VideoPlayer(_controller),
+                Stack(
+                  children: <Widget>[
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 50),
+                      reverseDuration: Duration(milliseconds: 200),
+                      child: _controller.value.isPlaying
+                          ? SizedBox.shrink()
+                          : Container(
+                              color: Colors.black26,
+                              child: Center(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white, width: 3),
+                                  ),
+                                  child: Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                    size: 80.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _controller.value.isPlaying ? _controller.pause() : _controller.play(),
+                    ),
+                  ],
                 ),
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  // Wrap the play or pause in a call to `setState`. This ensures the
-                  // correct icon is shown.
-                  setState(() {
-                    // If the video is playing, pause it.
-                    if (_controller.value.isPlaying) {
-                      _controller.pause();
-                    } else {
-                      // If the video is paused, play it.
-                      _controller.play();
-                    }
-                  });
-                },
-                // Display the correct icon depending on the state of the player.
-                child: Icon(
-                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                VideoProgressIndicator(
+                  _controller,
+                  allowScrubbing: true,
+                  colors: VideoProgressColors(playedColor: Colors.blueAccent),
+                  padding: EdgeInsets.all(0),
                 ),
-              ),
-            )
-          // If the video is not yet initialized, display a spinner
-          : Center(child: CircularProgressIndicator()),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
