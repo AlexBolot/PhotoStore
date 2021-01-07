@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "916526611223",
+    "project_id": "photostore-firebase",
+    "storage_bucket": "photostore-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916526611223:android:18785eeb60198722039552",
+        "android_client_info": {
+          "package_name": "bolot.alexandre.photo_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "916526611223-78vu79bhdkl2od8re3tj3c5p30djf16c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "bolot.alexandre.photo_store",
+            "certificate_hash": "5dc52bd15539abc265eeaea4166d5e5763f85bd5"
+          }
+        },
+        {
+          "client_id": "916526611223-uf4uuhguc79ufmc4qu7vkb26aot209n3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMkJmOo5yqN-wTZH6EyuGqW6m-JoAG190"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "916526611223-uf4uuhguc79ufmc4qu7vkb26aot209n3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
