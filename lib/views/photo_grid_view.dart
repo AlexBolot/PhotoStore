@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/6/21 6:01 PM
+ . Last modified : 1/7/21 10:06 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -48,6 +48,10 @@ class _PhotoGridViewState extends State<PhotoGridView> {
         crossAxisCount: 2,
         padding: EdgeInsets.all(8),
         children: albums.map((album) => AlbumWidget(album: album)).toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _fetchAssets(),
+        child: Icon(Icons.refresh),
       ),
     );
   }
