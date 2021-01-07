@@ -16,6 +16,9 @@ on:
   # Triggers the workflow on push or pull request events for any branch
   push:
     branches:
+      - master
+  pull_request:
+    branches:
       - '**'
 
   # Allows you to run this workflow manually from the Actions tab
