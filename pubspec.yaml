@@ -28,6 +28,11 @@ dependencies:
   flutter_stash:
   photo_manager: ^0.5.8
   video_player: ^0.11.1+2
+  firebase_core:
+  firebase_auth:
+  cloud_firestore:
+  firebase_storage:
+  image:
 
 dev_dependencies:
   flutter_test:
