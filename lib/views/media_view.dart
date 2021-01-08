@@ -5,16 +5,16 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/6/21 6:01 PM
+ . Last modified : 1/8/21 12:17 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_store/services/firebase_service.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaView extends StatelessWidget {
@@ -34,20 +34,6 @@ class MediaView extends StatelessWidget {
         return Container(child: Center(child: Text("Can't display this type of file")));
     }
   }
-
-  Widget imageScreen() {
-    return Container(
-      color: Colors.black,
-      alignment: Alignment.center,
-      child: FutureBuilder<File>(
-        future: file,
-        builder: (_, snapshot) {
-          final file = snapshot.data;
-          return (file != null) ? Image.file(file) : CircularProgressIndicator();
-        },
-      ),
-    );
-  }
 }
 
 class ImageScreen extends StatelessWidget {
@@ -57,15 +43,32 @@ class ImageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      alignment: Alignment.center,
-      child: FutureBuilder<File>(
-        future: file,
-        builder: (_, snapshot) {
-          final file = snapshot.data;
-          return (file != null) ? Image.file(file) : CircularProgressIndicator();
-        },
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              color: Colors.black,
+              alignment: Alignment.center,
+              child: FutureBuilder<File>(
+                future: file,
+                builder: (_, snapshot) {
+                  final file = snapshot.data;
+                  return (file != null) ? Image.file(file) : CircularProgressIndicator();
+                },
+              ),
+            ),
+            RaisedButton.icon(
+              label: Text('upload'),
+              icon: Icon(Icons.cloud_upload_outlined),
+              onPressed: () async {
+                var image = await file;
+                UploadService().saveImages([image]);
+              },
+            )
+          ],
+        ),
       ),
     );
   }
