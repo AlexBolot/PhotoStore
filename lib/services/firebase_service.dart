@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/8/21 10:13 AM
+ . Last modified : 1/8/21 10:58 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -26,12 +26,14 @@ class UploadService {
   Future<void> saveImages(List<File> images) async {
     images.forEach((image) async {
       String imagePath = '${image.path.split('/').last}';
-      String downloadUrl = await uploadFile(imagePath, image);
-      await uploadDownloadUrl(imagePath, downloadUrl);
+      String downloadUrl = await _uploadFile(imagePath, image);
+      await _uploadDownloadUrl(imagePath, downloadUrl);
     });
   }
 
-  Future<String> uploadFile(String imagePath, File image) async {
+  // ---------- Private methods ------------- //
+
+  Future<String> _uploadFile(String imagePath, File image) async {
     var storageReference = _storage.ref().child('Pictures/$imagePath');
     var uploadTask = storageReference.putFile(image);
 
@@ -41,7 +43,7 @@ class UploadService {
     return await storageReference.getDownloadURL();
   }
 
-  uploadDownloadUrl(String path, String url) async {
+  _uploadDownloadUrl(String path, String url) async {
     CollectionReference pictures = _firestore.collection("Pictures");
     pictures.document(path).setData({'downloadUrl': url});
   }
