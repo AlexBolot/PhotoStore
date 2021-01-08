@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/7/21 11:47 AM
+ . Last modified : 1/8/21 10:13 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -21,26 +21,28 @@ class UploadService {
   static final Firestore _firestore = Firestore.instance;
   static final FirebaseAuth mAuth = FirebaseAuth.instance;
 
-  DocumentReference pictures = _firestore.collection("Pictures").document();
+  CollectionReference pictures = _firestore.collection("Pictures");
 
-  //await saveImages(_images,sightingRef);
-
-  Future<void> saveImages(List<File> _images) async {
-    _images.forEach((image) async {
-      String imageURL = await uploadFile(image);
-      pictures.updateData({
-        "images": FieldValue.arrayUnion([imageURL])
-      });
+  Future<void> saveImages(List<File> images) async {
+    images.forEach((image) async {
+      String imagePath = '${image.path.split('/').last}';
+      String downloadUrl = await uploadFile(imagePath, image);
+      await uploadDownloadUrl(imagePath, downloadUrl);
     });
   }
 
-  Future<String> uploadFile(File _image) async {
-    var storageReference = _storage.ref().child('Pictures/${_image.path.split('/').last}');
-    var uploadTask = storageReference.putFile(_image);
+  Future<String> uploadFile(String imagePath, File image) async {
+    var storageReference = _storage.ref().child('Pictures/$imagePath');
+    var uploadTask = storageReference.putFile(image);
 
     await uploadTask.onComplete;
-    print('File Uploaded to Pictures/${_image.path}');
+    print('File Uploaded to Pictures/${image.path}');
 
     return await storageReference.getDownloadURL();
+  }
+
+  uploadDownloadUrl(String path, String url) async {
+    CollectionReference pictures = _firestore.collection("Pictures");
+    pictures.document(path).setData({'downloadUrl': url});
   }
 }
