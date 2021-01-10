@@ -5,18 +5,32 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/8/21 12:17 AM
+ . Last modified : 1/10/21 2:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
+import 'package:logging/logging.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_store/services/account_service.dart';
+import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
 
-void main() {
+main() async {
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    print('=== ${record.loggerName}: ${record.message}');
+  });
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  logger.info('Started App');
+
   runApp(PhotoStore());
 }
 
@@ -25,23 +39,26 @@ class PhotoStore extends StatelessWidget {
   Widget build(BuildContext context) {
     String applicationName = 'Photo Store';
 
-    buildSplashScreen() => SplashScreen(
-          title: applicationName,
-          nextRouteName: PhotoGridView.routeName,
-          loadFunctions: [
-            () async => await PhotoManager.requestPermission(),
-                () async => await FirebaseAuth.instance.signInAnonymously()
-          ],
-        );
-
     return MaterialApp(
       title: applicationName,
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => buildSplashScreen(),
-        SplashScreen.routeName: (context) => buildSplashScreen(),
+        '/': (context) => LoginView(title: applicationName),
+        LoginView.routeName: (context) => LoginView(title: applicationName),
+        SplashScreen.routeName: (context) => buildSplashScreen(applicationName),
         PhotoGridView.routeName: (context) => PhotoGridView()
       },
     );
   }
+}
+
+buildSplashScreen(String title) {
+  return SplashScreen(
+    title: title,
+    nextRouteName: PhotoGridView.routeName,
+    loadFunctions: [
+      () async => await PhotoManager.requestPermission(),
+      () async => await AccountService.loginToFirebase().then((result) => logResult('Firebase login', result)),
+    ],
+  );
 }
