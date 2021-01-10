@@ -5,12 +5,35 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/4/21 10:07 AM
+ . Last modified : 1/10/21 1:24 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:flutter/material.dart';
+import 'package:photo_store/services/logging_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+//========== Shared Preferences =============//
+
+SharedPreferences pref;
+
+setPreference(String key, String value) async {
+  pref ??= await SharedPreferences.getInstance();
+
+  logger.fine('Setting Preference -> $key :: $value');
+
+  pref.setString(key, value);
+}
+
+Future<String> getPreference(String key) async {
+  pref ??= await SharedPreferences.getInstance();
+  var value = pref.getString(key);
+
+  logger.fine('Fetching Preference -> $key :: $value');
+
+  return value;
+}
 
 //========== FormFields Validators ==========//
 

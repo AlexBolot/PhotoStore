@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/8/21 12:17 AM
+ . Last modified : 1/10/21 5:22 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -62,10 +62,7 @@ class ImageScreen extends StatelessWidget {
             RaisedButton.icon(
               label: Text('upload'),
               icon: Icon(Icons.cloud_upload_outlined),
-              onPressed: () async {
-                var image = await file;
-                UploadService().saveImages([image]);
-              },
+              onPressed: () async => FirebaseService.saveImage(await file),
             )
           ],
         ),
