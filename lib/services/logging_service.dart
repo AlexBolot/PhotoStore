@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 9:59 AM
+ . Last modified : 1/10/21 5:16 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -29,7 +29,7 @@ class AttemptResult {
 
   AttemptResult(this.value);
 
-  static get success => AttemptResult(true);
+  static AttemptResult get success => AttemptResult(true);
 
-  static get fail => AttemptResult(false);
+  static AttemptResult get fail => AttemptResult(false);
 }

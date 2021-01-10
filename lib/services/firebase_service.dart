@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 1:56 PM
+ . Last modified : 1/10/21 5:22 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,16 +13,13 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 
 class FirebaseService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static final FirebaseAuth mAuth = FirebaseAuth.instance;
-
-  static CollectionReference pictures = _firestore.collection("Pictures");
 
   static Future<AttemptResult> saveImage(File image) async {
     String imagePath = '${image.path.split('/').last}';
@@ -42,7 +39,9 @@ class FirebaseService {
   // ---------- Private methods ------------- //
 
   static Future<String> _uploadFile(String imagePath, File image) async {
-    var storageReference = _storage.ref().child('Pictures/$imagePath');
+    var folder = AccountService.currentAccount.name;
+
+    var storageReference = _storage.ref().child('$folder/$imagePath');
     var uploadTask = storageReference.putFile(image);
 
     await uploadTask.whenComplete(() => logDebug('File Uploaded to Pictures/${image.path}'));
@@ -50,7 +49,9 @@ class FirebaseService {
   }
 
   static _uploadDownloadUrl(String path, String url) async {
-    await pictures.doc(path).set({'downloadUrl': url});
+    var collection = _firestore.collection(AccountService.currentAccount.name);
+
+    await collection.doc(path).set({'downloadUrl': url});
     logDebug('Saved downloadUrl');
   }
 }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/6/21 6:01 PM
+ . Last modified : 1/10/21 4:58 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,7 +14,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_store/model/Album.dart';
+import 'package:photo_store/model/album.dart';
 import 'package:photo_store/views/album_view.dart';
 
 class AlbumWidget extends StatelessWidget {

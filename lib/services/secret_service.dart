@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 2:17 PM
+ . Last modified : 1/10/21 5:26 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,13 +13,20 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:photo_store/model/account.dart';
 
 class SecretService {
-  static get users async => _getJSON('secrets/accounts.json');
+  static Future<List<Account>> get accounts async {
+    var jsonUsers = await _fetchData('secrets/accounts.json');
+    return jsonUsers.map((jsonUser) => Account.fromJSON(jsonUser));
+  }
 
-  static get firebaseAccount async => await _getJSON('secrets/firebaseUser.json');
+  static Future<Account> get firebaseAccount async {
+    var jsonUser = await _fetchData('secrets/firebaseUser.json');
+    return Account.fromJSON(jsonUser);
+  }
 
-  static _getJSON(String path) async {
+  static _fetchData(String path) async {
     var stringData = await rootBundle.loadString(path);
     return json.decode(stringData);
   }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/7/21 10:06 AM
+ . Last modified : 1/10/21 4:58 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,7 +13,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/model/Album.dart';
+import 'package:photo_store/model/album.dart';
 import 'package:photo_store/widgets/album_widget.dart';
 
 class PhotoGridView extends StatefulWidget {

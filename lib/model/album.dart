@@ -1,11 +1,11 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The Album.dart class was created by : Alex Bolot and Pierre Bolot
+ . The album.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/6/21 6:01 PM
+ . Last modified : 1/10/21 4:58 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
