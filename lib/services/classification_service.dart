@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/19/21 7:03 PM
+ . Last modified : 1/20/21 9:16 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -38,7 +38,7 @@ class ClassificationService {
       labelsToSave = lowAccuracy.take(5).map((label) => label.text).toList();
     }
 
-    FirebaseService.saveImageWithLabels(file, labelsToSave);
+    FirebaseService.saveImage(file, labelsToSave);
 
     labeler.close();
   }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 9:05 AM
+ . Last modified : 1/20/21 9:16 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -21,30 +21,14 @@ class FirebaseService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static Future<AttemptResult> saveImage(File image) async {
+  static Future<AttemptResult> saveImage(File image, [List<String> labels = const []]) async {
     String imagePath = '${image.path.split('/').last}';
 
     logStep('Saving image $imagePath');
 
     try {
       String downloadUrl = await _uploadFile(imagePath, image);
-      await _uploadMetaData(imagePath, downloadUrl);
-      return AttemptResult.success;
-    } on Exception catch (e) {
-      logDebug(e);
-      return AttemptResult.fail;
-    }
-  }
-
-  static Future<AttemptResult> saveImageWithLabels(File image, List<String> labels) async {
-    String imagePath = '${image.path.split('/').last}';
-
-    logStep('Saving image with labels $imagePath');
-
-    try {
-      String downloadUrl = await _uploadFile(imagePath, image);
-      await _uploadMetaData(imagePath, downloadUrl);
-      await _uploadLabels(imagePath, labels);
+      await _uploadMetaData(imagePath, downloadUrl, labels);
       return AttemptResult.success;
     } on Exception catch (e) {
       logDebug(e);
@@ -64,17 +48,12 @@ class FirebaseService {
     return await storageReference.getDownloadURL();
   }
 
-  static _uploadMetaData(String path, String url) async {
+  static _uploadMetaData(String path, String url, List<String> labels) async {
     var collection = _firestore.collection(AccountService.currentAccount.name);
 
     await collection.doc(path).set({'downloadUrl': url});
     logDebug('Saved downloadUrl');
-  }
-
-  static _uploadLabels(String path, List<String> labels) async {
-    var collection = _firestore.collection(AccountService.currentAccount.name);
-
-    await collection.doc(path).set({'labels': labels});
+    await collection.doc(path).update({'labels': labels});
     logDebug('Saved labels $labels');
   }
 }
