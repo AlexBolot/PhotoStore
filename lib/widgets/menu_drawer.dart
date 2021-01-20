@@ -18,6 +18,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_store/services/classification_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
 class MenuDrawer extends StatefulWidget {
@@ -64,7 +65,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   activeColor: Theme.of(context).primaryColor,
                   isActive: status,
                   onChanged: (value) {
-                    print("VALUE : $value");
+                    logStep('Switched source to ${value ? 'Firebase' : 'Local'}');
+                    setPreference(Preferences.source, '');
                     setState(() => status = value);
                   },
                 ),

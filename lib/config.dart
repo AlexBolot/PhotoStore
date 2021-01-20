@@ -5,37 +5,13 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 1:03 AM
+ . Last modified : 1/20/21 6:13 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:photo_store/services/logging_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-//========== Shared Preferences =============//
-
-SharedPreferences pref;
-
-setPreference(String key, String value) async {
-  pref ??= await SharedPreferences.getInstance();
-
-  logger.fine('Setting Preference -> $key :: $value');
-
-  pref.setString(key, value);
-}
-
-Future<String> getPreference(String key) async {
-  pref ??= await SharedPreferences.getInstance();
-  var value = pref.getString(key);
-
-  logger.fine('Fetching Preference -> $key :: $value');
-
-  return value;
-}
+import 'package:flutter/services.dart';
 
 //========== FormFields Validators ==========//
 
@@ -67,3 +43,8 @@ FormFieldValidator<String> validPassword = (value) {
 //========== Others ==========//
 
 getTime() => DateTime.now().millisecondsSinceEpoch;
+
+press(Function function) {
+  HapticFeedback.vibrate();
+  function();
+}

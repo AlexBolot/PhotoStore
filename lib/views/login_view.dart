@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/13/21 10:35 PM
+ . Last modified : 1/20/21 6:10 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/config.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/services/preference_service.dart';
 
 class LoginView extends StatefulWidget {
   /// Use this for easier access from Named-Routes navigation
@@ -131,8 +132,8 @@ class _LoginViewState extends State<LoginView> {
     bool isVerified = await AccountService.verifyAccount(email, password);
 
     if (isVerified) {
-      setPreference('email', email);
-      setPreference('password', password);
+      setPreference(Preferences.email, email);
+      setPreference(Preferences.password, password);
 
       Navigator.of(context).pushNamed(SplashScreen.routeName);
     }
@@ -143,8 +144,8 @@ class _LoginViewState extends State<LoginView> {
   Future<AttemptResult> _autoLogin() async {
     logStep('Attempt Auto-login');
 
-    String email = await getPreference('email');
-    String password = await getPreference('password');
+    String email = await getPreference(Preferences.email);
+    String password = await getPreference(Preferences.password);
 
     if (email == null || password == null) return AttemptResult.fail;
 
