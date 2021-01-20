@@ -5,7 +5,7 @@
  *
  * As part of the PhotoStore project
  *
- * Last modified : 1/18/21 10:41 PM
+ * Last modified : 1/20/21 9:44 AM
  *
  * Contact : contact.alexandre.bolot@gmail.com
  */
@@ -39,7 +39,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    ndkVersion "21.3.6528147"
+    ndkVersion "22.0.7026061"
     compileSdkVersion 29
 
     sourceSets {
