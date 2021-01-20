@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:22 PM
+ . Last modified : 1/20/21 9:16 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -21,14 +21,14 @@ class FirebaseService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static Future<AttemptResult> saveImage(File image) async {
+  static Future<AttemptResult> saveImage(File image, [List<String> labels = const []]) async {
     String imagePath = '${image.path.split('/').last}';
 
     logStep('Saving image $imagePath');
 
     try {
       String downloadUrl = await _uploadFile(imagePath, image);
-      await _uploadDownloadUrl(imagePath, downloadUrl);
+      await _uploadMetaData(imagePath, downloadUrl, labels);
       return AttemptResult.success;
     } on Exception catch (e) {
       logDebug(e);
@@ -44,14 +44,16 @@ class FirebaseService {
     var storageReference = _storage.ref().child('$folder/$imagePath');
     var uploadTask = storageReference.putFile(image);
 
-    await uploadTask.whenComplete(() => logDebug('File Uploaded to Pictures/${image.path}'));
+    await uploadTask.whenComplete(() => logDebug('File Uploaded to $folder/$imagePath'));
     return await storageReference.getDownloadURL();
   }
 
-  static _uploadDownloadUrl(String path, String url) async {
+  static _uploadMetaData(String path, String url, List<String> labels) async {
     var collection = _firestore.collection(AccountService.currentAccount.name);
 
     await collection.doc(path).set({'downloadUrl': url});
     logDebug('Saved downloadUrl');
+    await collection.doc(path).update({'labels': labels});
+    logDebug('Saved labels $labels');
   }
 }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 4:58 PM
+ . Last modified : 1/19/21 7:26 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/album.dart';
 import 'package:photo_store/widgets/album_widget.dart';
+import 'package:photo_store/widgets/menu_drawer.dart';
 
 class PhotoGridView extends StatefulWidget {
   /// Use this for easier access from Named-Routes navigation
@@ -41,6 +42,7 @@ class _PhotoGridViewState extends State<PhotoGridView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MenuDrawer(),
       appBar: AppBar(
         title: Text(widget.title),
       ),

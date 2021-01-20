@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:26 PM
+ . Last modified : 1/19/21 10:01 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -17,8 +17,8 @@ import 'package:photo_store/model/account.dart';
 
 class SecretService {
   static Future<List<Account>> get accounts async {
-    var jsonUsers = await _fetchData('secrets/accounts.json');
-    return jsonUsers.map((jsonUser) => Account.fromJSON(jsonUser));
+    List<dynamic> jsonUsers = await _fetchData('secrets/accounts.json');
+    return jsonUsers.map((jsonUser) => Account.fromJSON(jsonUser)).toList();
   }
 
   static Future<Account> get firebaseAccount async {

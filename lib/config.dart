@@ -5,10 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 1:24 AM
+ . Last modified : 1/20/21 1:03 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:photo_store/services/logging_service.dart';

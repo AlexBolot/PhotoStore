@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:22 PM
+ . Last modified : 1/19/21 9:51 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -17,7 +17,7 @@ class Account {
 
   Account(this.email, this.password, [this.name]);
 
-  Account.fromJSON(Map<String, dynamic> data) {
+  Account.fromJSON(dynamic data) {
     this.email = data['email'];
     this.password = data['password'];
 
