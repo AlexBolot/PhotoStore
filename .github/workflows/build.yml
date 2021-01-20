@@ -45,6 +45,10 @@ jobs:
       # Setup the flutter environment.
       - uses: subosito/flutter-action@v1
 
+      # Install the required NDK
+      - name: Install NDK
+        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install 'ndk;21.3.6528147'
+
       # Get flutter dependencies.
       - run: flutter pub get
 
