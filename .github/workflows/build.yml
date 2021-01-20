@@ -34,22 +34,22 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Check-out code from branch
-        uses: actions/checkout@v2
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
 
-      - name: Setup Java environment
-        uses: actions/setup-java@v1
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
 
-      - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
 
-      - name: Get Flutter dependencies
-        run: flutter pub get
+      # Get flutter dependencies.
+      - run: flutter pub get
 
-      - name: Analyze code for any errors.
-        run: flutter analyze .
+      # Statically analyze the Dart code for any errors.
+      - run: flutter analyze .
 
-      - name: Build Android apk.
+      # Build apk.
       - run: flutter build apk --target-platform android-arm64
