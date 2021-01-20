@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:22 PM
+ . Last modified : 1/20/21 9:05 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -28,7 +28,23 @@ class FirebaseService {
 
     try {
       String downloadUrl = await _uploadFile(imagePath, image);
-      await _uploadDownloadUrl(imagePath, downloadUrl);
+      await _uploadMetaData(imagePath, downloadUrl);
+      return AttemptResult.success;
+    } on Exception catch (e) {
+      logDebug(e);
+      return AttemptResult.fail;
+    }
+  }
+
+  static Future<AttemptResult> saveImageWithLabels(File image, List<String> labels) async {
+    String imagePath = '${image.path.split('/').last}';
+
+    logStep('Saving image with labels $imagePath');
+
+    try {
+      String downloadUrl = await _uploadFile(imagePath, image);
+      await _uploadMetaData(imagePath, downloadUrl);
+      await _uploadLabels(imagePath, labels);
       return AttemptResult.success;
     } on Exception catch (e) {
       logDebug(e);
@@ -44,14 +60,21 @@ class FirebaseService {
     var storageReference = _storage.ref().child('$folder/$imagePath');
     var uploadTask = storageReference.putFile(image);
 
-    await uploadTask.whenComplete(() => logDebug('File Uploaded to Pictures/${image.path}'));
+    await uploadTask.whenComplete(() => logDebug('File Uploaded to $folder/$imagePath'));
     return await storageReference.getDownloadURL();
   }
 
-  static _uploadDownloadUrl(String path, String url) async {
+  static _uploadMetaData(String path, String url) async {
     var collection = _firestore.collection(AccountService.currentAccount.name);
 
     await collection.doc(path).set({'downloadUrl': url});
     logDebug('Saved downloadUrl');
+  }
+
+  static _uploadLabels(String path, List<String> labels) async {
+    var collection = _firestore.collection(AccountService.currentAccount.name);
+
+    await collection.doc(path).set({'labels': labels});
+    logDebug('Saved labels $labels');
   }
 }

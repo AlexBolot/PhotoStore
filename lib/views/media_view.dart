@@ -5,16 +5,18 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:22 PM
+ . Last modified : 1/20/21 9:05 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
 
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/services/firebase_service.dart';
+import 'package:photo_store/services/logging_service.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaView extends StatelessWidget {
@@ -45,8 +47,7 @@ class ImageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
+        child: Column(
           children: [
             Container(
               color: Colors.black,
@@ -59,10 +60,27 @@ class ImageScreen extends StatelessWidget {
                 },
               ),
             ),
-            RaisedButton.icon(
+            ElevatedButton.icon(
               label: Text('upload'),
               icon: Icon(Icons.cloud_upload_outlined),
               onPressed: () async => FirebaseService.saveImage(await file),
+            ),
+            ElevatedButton.icon(
+              label: Text('Analyse'),
+              icon: Icon(Icons.settings),
+              onPressed: () async {
+                final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(await file);
+                final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
+
+                var labels = await labeler.processImage(visionImage);
+
+                logDebug('----------------------');
+                for (ImageLabel label in labels) {
+                  final String text = label.text;
+                  final double confidence = label.confidence;
+                  logDebug("$text ${(confidence * 100).toStringAsFixed(1)}%");
+                }
+              },
             )
           ],
         ),
