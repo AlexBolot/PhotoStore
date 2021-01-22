@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 6:13 PM
+ . Last modified : 1/20/21 6:37 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -42,7 +42,7 @@ FormFieldValidator<String> validPassword = (value) {
 
 //========== Others ==========//
 
-getTime() => DateTime.now().millisecondsSinceEpoch;
+int getTime() => DateTime.now().millisecondsSinceEpoch;
 
 press(Function function) {
   HapticFeedback.vibrate();

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 2:12 PM
+ . Last modified : 1/21/21 10:48 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -46,7 +46,7 @@ class PhotoStore extends StatelessWidget {
         '/': (context) => LoginView(title: applicationName),
         LoginView.routeName: (context) => LoginView(title: applicationName),
         SplashScreen.routeName: (context) => buildSplashScreen(applicationName),
-        PhotoGridView.routeName: (context) => PhotoGridView()
+        PhotoGridView.routeName: (context) => PhotoGridView(),
       },
     );
   }
