@@ -5,33 +5,29 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'package:firebase_image/firebase_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:photo_store/model/firebase_album.dart';
-import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/views/firebase_album_view.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 
 class FirebaseAlbumCard extends StatelessWidget {
   final FirebaseAlbum album;
-  final Future<FirebaseFile> futureFile;
+  final Future<File> futureFile;
 
   FirebaseAlbumCard(this.album) : futureFile = album.thumbnail;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureWidget<File>(
       future: futureFile,
-      builder: (context, snapshot) {
-        if (snapshot.data == null) return CircularProgressIndicator();
-
-        FirebaseFile thumbnail = snapshot.data;
-
+      builder: (thumbnail) {
         return InkWell(
           onTap: () {
             Navigator.push(
@@ -43,11 +39,11 @@ class FirebaseAlbumCard extends StatelessWidget {
           },
           child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: FirebaseImage(thumbnail.location),
+                  image: FileImage(thumbnail),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -57,12 +53,10 @@ class FirebaseAlbumCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 4),
                   color: Colors.black87,
                   width: double.maxFinite,
-                  child: FutureBuilder(
+                  child: FutureWidget<int>(
                     future: album.count,
                     initialData: -1,
-                    builder: (context, snapshot) {
-                      var count = snapshot.data;
-
+                    builder: (count) {
                       return Text(
                         "${album.name} ($count)",
                         style: TextStyle(color: Colors.white),

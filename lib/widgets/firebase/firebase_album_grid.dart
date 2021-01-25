@@ -1,11 +1,11 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The firebase_global_grid.dart class was created by : Alex Bolot and Pierre Bolot
+ . The firebase_album_grid.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,17 +16,18 @@ import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/services/gallery_service.dart';
 import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/firebase/firebase_album_card.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 
-class FirebaseGlobalGrid extends StatefulWidget {
+class FirebaseAlbumGrid extends StatefulWidget {
   final Function(String source) onChangeSource;
 
-  const FirebaseGlobalGrid({this.onChangeSource});
+  const FirebaseAlbumGrid({this.onChangeSource});
 
   @override
-  _FirebaseGlobalGridState createState() => _FirebaseGlobalGridState();
+  _FirebaseAlbumGridState createState() => _FirebaseAlbumGridState();
 }
 
-class _FirebaseGlobalGridState extends State<FirebaseGlobalGrid> {
+class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
   Future<List<FirebaseAlbum>> futureAlbums;
 
   @override
@@ -38,16 +39,12 @@ class _FirebaseGlobalGridState extends State<FirebaseGlobalGrid> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
+      body: FutureWidget<List<FirebaseAlbum>>(
         future: futureAlbums,
-        builder: (context, snapshot) {
-          if (snapshot.data == null) return CircularProgressIndicator();
-
-          List<FirebaseAlbum> albums = snapshot.data;
-
+        builder: (albums) {
           return GridView.count(
             crossAxisCount: 2,
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(4),
             children: albums.map((album) => FirebaseAlbumCard(album)).toList(),
           );
         },

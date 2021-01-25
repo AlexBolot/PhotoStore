@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaView extends StatelessWidget {
@@ -51,12 +52,9 @@ class ImageScreen extends StatelessWidget {
             Container(
               color: Colors.black,
               alignment: Alignment.center,
-              child: FutureBuilder<File>(
+              child: FutureWidget<File>(
                 future: file,
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) return CircularProgressIndicator();
-                  return Image.file(snapshot.data);
-                },
+                builder: (file) => Image.file(file),
               ),
             ),
             ElevatedButton.icon(

@@ -5,32 +5,33 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
 
-import 'package:firebase_image/firebase_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class FirebaseMediaView extends StatelessWidget {
-  final String location;
+  final Future<File> futureFile;
   final AssetType type;
 
-  const FirebaseMediaView({@required this.location, @required this.type});
+  const FirebaseMediaView({@required this.futureFile, @required this.type});
 
   @override
   Widget build(BuildContext context) {
     switch (type) {
       case AssetType.image:
-        return ImageScreen(location: location);
+        return ImageScreen(futureFile);
       case AssetType.video:
-      //return VideoScreen(file: file);
+        return VideoScreen(file: futureFile);
       default:
         return Container(child: Center(child: Text("Can't display this type of file")));
     }
@@ -38,9 +39,9 @@ class FirebaseMediaView extends StatelessWidget {
 }
 
 class ImageScreen extends StatelessWidget {
-  final String location;
+  final Future<File> futureFile;
 
-  const ImageScreen({@required this.location});
+  const ImageScreen(this.futureFile);
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +53,16 @@ class ImageScreen extends StatelessWidget {
             Container(
               color: Colors.black,
               alignment: Alignment.center,
-              child: Image(image: FirebaseImage(location)),
+              child: FutureWidget<File>(
+                future: futureFile,
+                builder: (file) => Image.file(file),
+              ),
             ),
-            /*ElevatedButton.icon(
+            ElevatedButton.icon(
               label: Text('Analyse'),
               icon: Icon(Icons.settings),
               onPressed: () async {
-                final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(await file);
+                final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(await futureFile);
                 final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
 
                 var labels = await labeler.processImage(visionImage);
@@ -70,7 +74,7 @@ class ImageScreen extends StatelessWidget {
                   logDebug("$text ${(confidence * 100).toStringAsFixed(1)}%");
                 }
               },
-            )*/
+            )
           ],
         ),
       ),

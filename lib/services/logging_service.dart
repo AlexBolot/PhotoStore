@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:42 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,7 +14,7 @@ import 'package:logging/logging.dart';
 
 Logger logger = Logger('Photo Store');
 
-logDebug(message) => logger.finer(message);
+logDebug(message) => logger.finer('.. $message');
 
 logInfo(message) => logger.fine(message);
 

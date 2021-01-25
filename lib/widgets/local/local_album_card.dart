@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:45 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_store/model/local_album.dart';
 import 'package:photo_store/views/local_album_view.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 
 class LocalAlbumCard extends StatefulWidget {
   final LocalAlbum album;
@@ -37,14 +38,9 @@ class _LocalAlbumCardState extends State<LocalAlbumCard> {
 
   @override
   Widget build(BuildContext context) {
-    // We're using a FutureBuilder since thumbData is a future
-    return FutureBuilder<Uint8List>(
+    return FutureWidget<Uint8List>(
       future: futureThumbnail,
-      builder: (context, snapshot) {
-        final bytes = snapshot.data;
-
-        if (bytes == null) return CircularProgressIndicator();
-
+      builder: (bytes) {
         return InkWell(
           onTap: () {
             Navigator.push(

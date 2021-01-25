@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/22/21 11:07 PM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -19,6 +19,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_store/config.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/classification_service.dart';
+import 'package:photo_store/services/firebase/download_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/firebase_service.dart';
 import 'package:photo_store/services/logging_service.dart';
@@ -100,6 +101,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ],
             ),
           ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            leading: Icon(Icons.list_alt_rounded),
+            title: Text('Charger liste firestore'),
+            onTap: () =>
+                press(() => DownloadService.downloadFile('https://via.placeholder.com/150', SavePath('a', 'b.png'))),
+          )
           /*Image(
             image: FirebaseImage(
               'gs://photostore-firebase.appspot.com/Alex/10814250_741285582632220_1788011061_n_741285582632220.jpg',

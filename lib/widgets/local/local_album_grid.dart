@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:photo_store/config.dart';
 import 'package:photo_store/model/local_album.dart';
 import 'package:photo_store/services/gallery_service.dart';
 import 'package:photo_store/services/preference_service.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 import 'package:photo_store/widgets/local/local_album_card.dart';
 
 class LocalAlbumGrid extends StatefulWidget {
@@ -41,13 +42,9 @@ class _LocalAlbumGridState extends State<LocalAlbumGrid> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
+      body: FutureWidget<List<LocalAlbum>>(
         future: futureAlbums,
-        builder: (context, snapshot) {
-          if (snapshot.data == null) return CircularProgressIndicator();
-
-          List<LocalAlbum> albums = snapshot.data;
-
+        builder: (albums) {
           return GridView.count(
             crossAxisCount: 2,
             padding: EdgeInsets.all(8),
