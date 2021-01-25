@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/widgets/firebase/firebase_media_card.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 
 class FirebaseAlbumView extends StatefulWidget {
   static const String routeName = '/FirebaseAlbumView';
@@ -41,13 +42,9 @@ class _FirebaseAlbumViewState extends State<FirebaseAlbumView> {
       appBar: AppBar(
         title: Text(album.name),
       ),
-      body: FutureBuilder(
+      body: FutureWidget<List<FirebaseFile>>(
         future: album.files,
-        builder: (context, snapshot) {
-          if (snapshot.data == null) return CircularProgressIndicator();
-
-          List<FirebaseFile> files = snapshot.data;
-
+        builder: (files) {
           return GridView.count(
             crossAxisCount: 2,
             padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),

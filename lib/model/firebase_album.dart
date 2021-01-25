@@ -5,10 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 11:00 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
+
+import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:photo_store/model/firebase_file.dart';
@@ -19,17 +21,15 @@ class FirebaseAlbum {
   Reference reference;
 
   List<FirebaseFile> _files;
+  File _thumbnail;
   int _count;
 
   FirebaseAlbum(Reference ref) {
     this.reference = ref;
     this.name = ref.name;
-
-    logDebug('Created album ${this.name}');
   }
 
   Future<int> get count async {
-    logDebug('accessing count');
     if (_count == null) {
       if (_files != null) {
         _count = _files.length;
@@ -42,23 +42,22 @@ class FirebaseAlbum {
   }
 
   Future<List<FirebaseFile>> get files async {
-    logDebug('Accessing files of ${this.name}');
     return _files ??= await _loadFiles();
   }
 
-  Future<FirebaseFile> get thumbnail async => (await files).first;
+  Future<File> get thumbnail async {
+    if (_thumbnail != null) return _thumbnail;
 
-  _loadFiles() async {
-    ListResult list = await reference.listAll();
-    return list.items.map((fileReference) => FirebaseFile(fileReference)).toList();
+    var firstFile = (await files).first;
+    return _thumbnail = await firstFile.file;
   }
 
-  /// Load only the first file from firebase
-  /*Future<FirebaseFile> _loadThumbnail() async {
+  Future<List<FirebaseFile>> _loadFiles() async {
     ListResult list = await reference.listAll();
-    var firebaseFile = FirebaseFile(list.items.first);
-    return firebaseFile;
-  }*/
+    var files = list.items.map((fileReference) => FirebaseFile(fileReference)).toList();
+    logDebug("loaded ${files.length} fiels for album '$name'");
+    return files;
+  }
 
   _loadFilesCount() async {
     ListResult list = await reference.listAll();

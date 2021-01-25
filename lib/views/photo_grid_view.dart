@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 9:09 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,7 +13,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_store/services/preference_service.dart';
-import 'package:photo_store/widgets/firebase/firebase_global_grid.dart';
+import 'package:photo_store/widgets/firebase/firebase_album_grid.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 import 'package:photo_store/widgets/local/local_album_grid.dart';
 import 'package:photo_store/widgets/menu_drawer.dart';
 
@@ -25,33 +26,35 @@ class PhotoGridView extends StatefulWidget {
 }
 
 class _PhotoGridViewState extends State<PhotoGridView> {
+  Future<String> futurePreference;
+
   @override
   void initState() {
+    futurePreference = getPreference(Preference.source, orDefault: Source.localStorage);
     super.initState();
   }
 
   changeSource(String source) {
     setState(() {
       setPreference(Preference.source, source);
+      futurePreference = Future.value(source);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getPreference(Preference.source, orDefault: Source.localStorage),
+    return FutureWidget<String>(
+      future: futurePreference,
       initialData: Source.firebaseStorage,
-      builder: (context, source) {
+      builder: (source) {
         return Scaffold(
           drawer: MenuDrawer(onChangeSource: changeSource),
-          appBar: AppBar(title: Text(source.data ?? '')),
+          appBar: AppBar(title: Text(source)),
           body: Builder(
             builder: (context) {
-              if (!source.hasData) return CircularProgressIndicator();
-
-              switch (source.data) {
+              switch (source) {
                 case Source.firebaseStorage:
-                  return FirebaseGlobalGrid(onChangeSource: changeSource);
+                  return FirebaseAlbumGrid(onChangeSource: changeSource);
                 case Source.localStorage:
                   return LocalAlbumGrid(onChangeSource: changeSource);
                 default:

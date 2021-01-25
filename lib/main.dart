@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:42 AM
+ . Last modified : 1/25/21 5:27 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -21,9 +21,9 @@ import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
 
 main() async {
-  Logger.root.level = Level.FINE;
+  Logger.root.level = Level.FINER;
   Logger.root.onRecord.listen((record) {
-    print('=== ${record.loggerName}: ${record.message}');
+    print(':: ${record.loggerName} :: ${record.message}');
   });
 
   WidgetsFlutterBinding.ensureInitialized();
