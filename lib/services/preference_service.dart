@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/21/21 10:18 AM
+ . Last modified : 1/25/21 10:42 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,8 +20,16 @@ class Preference {
 }
 
 class Source {
-  static const String localStorage = 'local';
   static const String firebaseStorage = 'firebase';
+  static const String localStorage = 'local';
+
+  static bool asBoolean(String source) {
+    return source == firebaseStorage;
+  }
+
+  static String fromBoolean(bool value) {
+    return value ? firebaseStorage : localStorage;
+  }
 }
 
 SharedPreferences pref;
@@ -29,7 +37,7 @@ SharedPreferences pref;
 setPreference(String key, String value) async {
   pref ??= await SharedPreferences.getInstance();
 
-  logDebug('Setting Preference -> $key :: $value');
+  logInfo('Setting Preference -> $key :: $value');
 
   pref.setString(key, value);
 }
@@ -41,10 +49,10 @@ Future<String> getPreference(String key, {String orDefault}) async {
 
   if (hasValue) {
     var value = pref.getString(key);
-    logDebug('Fetching Preference -> $key :: $value');
+    logInfo('Fetching Preference -> $key :: $value');
     return value;
   } else {
-    logDebug('Fetching Preference -> $key not found !');
+    logInfo('Fetching Preference -> $key not found !');
     return orDefault;
   }
 }

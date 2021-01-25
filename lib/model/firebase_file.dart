@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 1/22/21 1:52 AM
+ . Last modified : 1/25/21 10:42 AM
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,7 +20,6 @@ import 'package:photo_store/services/logging_service.dart';
 
 class FirebaseFile {
   Reference reference;
-  String downloadUrl;
   String name;
   AssetType type;
 
@@ -37,11 +36,14 @@ class FirebaseFile {
     return _file;
   }
 
+  String get location => 'gs://${reference.bucket}/${reference.fullPath}';
+
   Future<File> _loadFile() async {
     var parentDir = reference.parent.name;
+    var downloadUrl = await reference.getDownloadURL();
     var savePath = SavePath(parentDir, name);
 
-    return DownloadService.downloadFile(downloadUrl, savePath);
+    return await DownloadService.downloadFile(downloadUrl, savePath);
   }
 
   AssetType _findType() {
@@ -56,7 +58,7 @@ class FirebaseFile {
       case 'webm':
         return AssetType.video;
       default:
-        logDebug('WARNING : Unknown file type $fileExtension');
+        logWarning('Unknown file type $fileExtension');
         return AssetType.other;
     }
   }

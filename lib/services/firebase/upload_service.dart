@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/22/21 12:37 AM
+ . Last modified : 1/25/21 10:42 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -32,7 +32,7 @@ class UploadService {
       await _uploadMetaData(savePath, downloadUrl, labels);
       return AttemptResult.success;
     } on Exception catch (e) {
-      logDebug(e);
+      logWarning(e);
       return AttemptResult.fail;
     }
   }
@@ -47,7 +47,7 @@ class UploadService {
     var fileReference = storageFolder.child(savePath.fileName);
     var uploadTask = fileReference.putFile(file);
 
-    await uploadTask.whenComplete(() => logDebug('File Uploaded to ${fileReference.fullPath}'));
+    await uploadTask.whenComplete(() => logInfo('File Uploaded to ${fileReference.fullPath}'));
     return await fileReference.getDownloadURL();
   }
 

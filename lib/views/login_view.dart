@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 6:10 PM
+ . Last modified : 1/22/21 11:05 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -132,8 +132,8 @@ class _LoginViewState extends State<LoginView> {
     bool isVerified = await AccountService.verifyAccount(email, password);
 
     if (isVerified) {
-      setPreference(Preferences.email, email);
-      setPreference(Preferences.password, password);
+      setPreference(Preference.email, email);
+      setPreference(Preference.password, password);
 
       Navigator.of(context).pushNamed(SplashScreen.routeName);
     }
@@ -144,8 +144,8 @@ class _LoginViewState extends State<LoginView> {
   Future<AttemptResult> _autoLogin() async {
     logStep('Attempt Auto-login');
 
-    String email = await getPreference(Preferences.email);
-    String password = await getPreference(Preferences.password);
+    String email = await getPreference(Preference.email);
+    String password = await getPreference(Preference.password);
 
     if (email == null || password == null) return AttemptResult.fail;
 
