@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:42 AM
+ . Last modified : 1/25/21 10:41 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -51,7 +51,7 @@ class UploadService {
     return await fileReference.getDownloadURL();
   }
 
-  /// Uploads the labels and downloadURL of a [file] to the Firestore
+  /// Uploads the labels and downloadURL of a [futureFile] to the Firestore
   ///
   static _uploadMetaData(SavePath savePath, String url, List<String> labels) async {
     DocumentReference document = _getCollection(savePath).doc(savePath.fileName);
