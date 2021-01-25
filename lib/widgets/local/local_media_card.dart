@@ -5,11 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 8:00 PM
+ . Last modified : 1/25/21 10:50 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -29,10 +30,14 @@ class LocalMediaCard extends StatefulWidget {
 
 class _LocalMediaCardState extends State<LocalMediaCard> {
   Future<Uint8List> futureThumbnail;
+  Future<File> futureFile;
+  AssetType type;
 
   @override
   void initState() {
     futureThumbnail = widget.media.thumbDataWithSize(400, 400);
+    futureFile = widget.media.file;
+    type = widget.media.type;
     super.initState();
   }
 
@@ -46,7 +51,7 @@ class _LocalMediaCardState extends State<LocalMediaCard> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MediaView(file: widget.media.file, type: widget.media.type),
+                builder: (context) => MediaView(futureFile: futureFile, type: type),
               ),
             );
           },
@@ -60,7 +65,7 @@ class _LocalMediaCardState extends State<LocalMediaCard> {
                 Positioned.fill(
                   child: Image.memory(bytes, fit: BoxFit.cover),
                 ),
-                if (widget.media.type == AssetType.video)
+                if (type == AssetType.video)
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
