@@ -5,14 +5,15 @@
   ~
   ~ As part of the PhotoStore project
   ~
-  ~ Last modified : 1/20/21 9:05 AM
+  ~ Last modified : 1/20/21 6:13 PM
   ~
   ~ Contact : contact.alexandre.bolot@gmail.com
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="bolot.alexandre.photo_store">
-   <application
+
+    <application
         android:label="photo_store"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -54,4 +55,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>

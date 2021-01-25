@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:16 PM
+ . Last modified : 1/25/21 10:42 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -28,10 +28,10 @@ class AccountService {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
-          logDebug('No user found with email ${user.email}');
+          logWarning('No user found with email ${user.email}');
           break;
         case 'wrong-password':
-          logDebug("Wrong password provided for ${user.email}");
+          logWarning("Wrong password provided for ${user.email}");
           break;
       }
 

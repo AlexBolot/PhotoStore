@@ -1,33 +1,32 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The album_view.dart class was created by : Alex Bolot and Pierre Bolot
+ . The local_album_view.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 4:58 PM
+ . Last modified : 1/25/21 10:45 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_store/model/album.dart';
-import 'package:photo_store/widgets/media_widget.dart';
+import 'package:photo_store/model/local_album.dart';
+import 'package:photo_store/widgets/local/local_media_card.dart';
 
-class AlbumView extends StatefulWidget {
-  /// Use this for easier access from Named-Routes navigation
-  static const String routeName = "/PhotoGridView";
+class LocalAlbumView extends StatefulWidget {
+  static const String routeName = '/LocalAlbumView';
 
-  final Album album;
+  final LocalAlbum album;
 
-  const AlbumView({this.album});
+  const LocalAlbumView({this.album});
 
   @override
-  _AlbumViewState createState() => _AlbumViewState();
+  _LocalAlbumViewState createState() => _LocalAlbumViewState();
 }
 
-class _AlbumViewState extends State<AlbumView> {
+class _LocalAlbumViewState extends State<LocalAlbumView> {
   @override
   void initState() {
     super.initState();
@@ -35,7 +34,7 @@ class _AlbumViewState extends State<AlbumView> {
 
   @override
   Widget build(BuildContext context) {
-    var album = widget.album ?? Album.empty();
+    var album = widget.album;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +43,7 @@ class _AlbumViewState extends State<AlbumView> {
       body: GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        children: album.items.map((item) => MediaWidget(media: item)).toList(),
+        children: album.items.map((item) => LocalMediaCard(item)).toList(),
       ),
     );
   }

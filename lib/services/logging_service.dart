@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 5:16 PM
+ . Last modified : 1/25/21 10:42 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,12 +14,20 @@ import 'package:logging/logging.dart';
 
 Logger logger = Logger('Photo Store');
 
-logDebug(message) => logger.fine(message);
+logDebug(message) => logger.finer(message);
+
+logInfo(message) => logger.fine(message);
+
+logWarning(message) => logger.warning('WARNING : $message');
 
 logStep(message) => logger.info(message);
 
 logResult(String attemptName, AttemptResult result) {
   logger.fine('$attemptName : ${result.value ? 'success' : 'failed'}');
+}
+
+logDelay(String message, int start, int end) {
+  logger.info('$message in ${(end - start) / 1000}s');
 }
 
 /// Class used to give more semantic meaning when returning "true" or "false"

@@ -1,7 +1,7 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The media_view.dart class was created by : Alex Bolot and Pierre Bolot
+ . The firebase_media_view.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
@@ -12,25 +12,25 @@
 
 import 'dart:io';
 
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:firebase_image/firebase_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/services/logging_service.dart';
 import 'package:video_player/video_player.dart';
 
-class MediaView extends StatelessWidget {
-  final Future<File> file;
+class FirebaseMediaView extends StatelessWidget {
+  final String location;
   final AssetType type;
 
-  const MediaView({@required this.file, @required this.type});
+  const FirebaseMediaView({@required this.location, @required this.type});
 
   @override
   Widget build(BuildContext context) {
     switch (type) {
       case AssetType.image:
-        return ImageScreen(file: file);
+        return ImageScreen(location: location);
       case AssetType.video:
-        return VideoScreen(file: file);
+      //return VideoScreen(file: file);
       default:
         return Container(child: Center(child: Text("Can't display this type of file")));
     }
@@ -38,28 +38,23 @@ class MediaView extends StatelessWidget {
 }
 
 class ImageScreen extends StatelessWidget {
-  final Future<File> file;
+  final String location;
 
-  const ImageScreen({@required this.file});
+  const ImageScreen({@required this.location});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
             Container(
               color: Colors.black,
               alignment: Alignment.center,
-              child: FutureBuilder<File>(
-                future: file,
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) return CircularProgressIndicator();
-                  return Image.file(snapshot.data);
-                },
-              ),
+              child: Image(image: FirebaseImage(location)),
             ),
-            ElevatedButton.icon(
+            /*ElevatedButton.icon(
               label: Text('Analyse'),
               icon: Icon(Icons.settings),
               onPressed: () async {
@@ -75,7 +70,7 @@ class ImageScreen extends StatelessWidget {
                   logDebug("$text ${(confidence * 100).toStringAsFixed(1)}%");
                 }
               },
-            )
+            )*/
           ],
         ),
       ),

@@ -1,11 +1,11 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The album_widget.dart class was created by : Alex Bolot and Pierre Bolot
+ . The local_album_card.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/10/21 4:58 PM
+ . Last modified : 1/25/21 10:45 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,20 +14,33 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_store/model/album.dart';
-import 'package:photo_store/views/album_view.dart';
+import 'package:photo_store/model/local_album.dart';
+import 'package:photo_store/views/local_album_view.dart';
 
-class AlbumWidget extends StatelessWidget {
-  final Album album;
+class LocalAlbumCard extends StatefulWidget {
+  final LocalAlbum album;
 
-  const AlbumWidget({@required this.album});
+  const LocalAlbumCard({@required this.album});
+
+  @override
+  _LocalAlbumCardState createState() => _LocalAlbumCardState();
+}
+
+class _LocalAlbumCardState extends State<LocalAlbumCard> {
+  Future<Uint8List> futureThumbnail;
+
+  @override
+  void initState() {
+    futureThumbnail = widget.album.thumbnail;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     // We're using a FutureBuilder since thumbData is a future
     return FutureBuilder<Uint8List>(
-      future: album.thumbDataWithSize(width: 400, height: 400),
-      builder: (_, snapshot) {
+      future: futureThumbnail,
+      builder: (context, snapshot) {
         final bytes = snapshot.data;
 
         if (bytes == null) return CircularProgressIndicator();
@@ -37,7 +50,7 @@ class AlbumWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => AlbumView(album: album),
+                builder: (context) => LocalAlbumView(album: widget.album),
               ),
             );
           },
@@ -58,7 +71,7 @@ class AlbumWidget extends StatelessWidget {
                   color: Colors.black87,
                   width: double.maxFinite,
                   child: Text(
-                    "${album.name} (${album.count})",
+                    "${widget.album.name} (${widget.album.count})",
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
@@ -71,20 +84,3 @@ class AlbumWidget extends StatelessWidget {
     );
   }
 }
-
-/*
-child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.memory(bytes, fit: BoxFit.cover),
-                ),
-                if (asset.type == AssetType.video)
-                  Center(
-                    child: Container(
-                      color: Colors.blue,
-                      child: Icon(Icons.play_arrow, color: Colors.white),
-                    ),
-                  ),
-              ],
-            ),
- */
