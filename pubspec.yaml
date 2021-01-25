@@ -32,6 +32,7 @@ dependencies:
   logging: ^0.11.4
   path_provider: ^1.6.14
   image: ^2.1.19
+  liquid_progress_indicator:
 
   # firebase dependencies
   firebase_core: ^0.5.3

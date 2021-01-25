@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 8:00 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/views/media_view.dart';
+import 'package:photo_store/widgets/future_widget.dart';
 
 class LocalMediaCard extends StatefulWidget {
   final AssetEntity media;
@@ -37,13 +38,9 @@ class _LocalMediaCardState extends State<LocalMediaCard> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Uint8List>(
+    return FutureWidget<Uint8List>(
       future: futureThumbnail,
-      builder: (context, snapshot) {
-        final bytes = snapshot.data;
-
-        if (bytes == null) return CircularProgressIndicator();
-
+      builder: (bytes) {
         return InkWell(
           onTap: () {
             Navigator.push(
