@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:45 AM
+ . Last modified : 1/25/21 11:00 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -54,11 +54,11 @@ class FirebaseAlbum {
   }
 
   /// Load only the first file from firebase
-  Future<FirebaseFile> _loadThumbnail() async {
+  /*Future<FirebaseFile> _loadThumbnail() async {
     ListResult list = await reference.listAll();
     var firebaseFile = FirebaseFile(list.items.first);
     return firebaseFile;
-  }
+  }*/
 
   _loadFilesCount() async {
     ListResult list = await reference.listAll();

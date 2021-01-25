@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/25/21 11:00 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,17 +13,13 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_store/config.dart';
 import 'package:photo_store/services/logging_service.dart';
 
 class FirebaseService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final HttpClient httpClient = HttpClient();
 
   static Map<String, File> loadedImages = {};
@@ -63,7 +59,7 @@ class FirebaseService {
     return null;
   }
 
-  static Future<File> _generateThumbnail(File file, String fileName) async {
+  /*static Future<File> _generateThumbnail(File file, String fileName) async {
     int startTime = getTime();
 
     img.Image temp = img.decodeImage(file.readAsBytesSync());
@@ -82,5 +78,5 @@ class FirebaseService {
     logDelay('Created thumbnail file', startTime, getTime());
 
     return file2;
-  }
+  }*/
 }
