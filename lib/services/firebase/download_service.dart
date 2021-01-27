@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/27/21 3:48 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -41,6 +41,8 @@ class DownloadService {
 
     return FirebaseFileService.saveFile(bytes, savePath);
   }
+
+  // ------------------ Private methods ------------------ //
 
   /// Return a Storage reference (folder) based on the active user and the given directory path
   ///

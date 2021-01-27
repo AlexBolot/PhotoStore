@@ -5,24 +5,19 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/27/21 5:08 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_store/config.dart';
-import 'package:photo_store/model/save_path.dart';
-import 'package:photo_store/services/classification_service.dart';
-import 'package:photo_store/services/firebase/download_service.dart';
+import 'package:photo_store/services/firebase/firebase_file_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/firebase_service.dart';
-import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
@@ -65,92 +60,84 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ),
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            leading: Icon(Icons.upload_sharp),
-            title: Text('Upload with labels'),
-            onTap: () => press(uploadWithLabels),
+          SimpleItem(
+            icon: Icons.upload_sharp,
+            text: 'Upload with labels',
+            onPress: () => UploadService.uploadWithLabels(),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            leading: Icon(Icons.list_alt_rounded),
-            title: Text('Charger liste firestore'),
-            onTap: () => press(() => FirebaseService.fetchFirestoreContent()),
+          SimpleItem(
+            icon: Icons.list_alt_rounded,
+            text: 'Charger liste firestore',
+            onPress: () => FirebaseService.fetchFirestoreContent(),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text('Changer de source', style: TextStyle(fontSize: 18)),
-                Container(
-                  child: ToggleSwitch(
-                    activeText: 'Firebase',
-                    inactiveText: 'Local',
-                    activeColor: Theme.of(context).primaryColor,
-                    isActive: status,
-                    onChanged: (value) {
-                      press(() {
-                        setState(() => status = value);
-                        widget.onChangeSource(Source.fromBoolean(value));
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
+          ToggleItem(
+            text: 'Changer de source',
+            activeText: 'Firebase',
+            inactiveText: 'Local',
+            status: status,
+            onChange: (value) {
+              setState(() => status = value);
+              widget.onChangeSource(Source.fromBoolean(value));
+            },
           ),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            leading: Icon(Icons.list_alt_rounded),
-            title: Text('Charger liste firestore'),
-            onTap: () =>
-                press(() => DownloadService.downloadFile('https://via.placeholder.com/150', SavePath('a', 'b.png'))),
-          )
-          /*Image(
-            image: FirebaseImage(
-              'gs://photostore-firebase.appspot.com/Alex/10814250_741285582632220_1788011061_n_741285582632220.jpg',
-              shouldCache: true, // The image should be cached (default: True)
-              maxSizeBytes: 3000 * 1000, // 3MB max file size (default: 2.5MB)
-              cacheRefreshStrategy: CacheRefreshStrategy.NEVER, // Switch off update checking
-            ),
-            width: 100,
-          ),*/
+          SimpleItem(
+            icon: Icons.delete,
+            text: 'Libérer de l\'espace',
+            onPress: () => FirebaseFileService.freeSpaceOnDevice(),
+          ),
         ],
       ),
     );
   }
 }
 
-uploadWithLabels() async {
-  Directory appDocumentsDirectory = await getExternalStorageDirectory();
-  var directories = appDocumentsDirectory.listSync();
+class SimpleItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Function onPress;
 
-  directories.take(5).forEach((dir) async {
-    if (dir is Directory) {
-      int count = 0;
+  const SimpleItem({Key key, this.icon, this.text, this.onPress}) : super(key: key);
 
-      logDebug('------ ${dir.path.split('/').last} ------');
-      var dirName = dir.path.split('/').last;
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: Icon(icon),
+      title: Text(text),
+      onTap: () => press(onPress),
+    );
+  }
+}
 
-      for (var item in dir.listSync()) {
-        if (count > 10) return;
+class ToggleItem extends StatelessWidget {
+  final String text;
+  final String activeText;
+  final String inactiveText;
+  final bool status;
+  final Function(bool) onChange;
 
-        if (item is File) {
-          var fileExtension = item.path.split('.').last.toLowerCase();
-          bool isImage = ['jpg', 'png', 'jpeg'].contains(fileExtension);
+  const ToggleItem({this.text, this.activeText, this.inactiveText, this.status, this.onChange});
 
-          if (isImage) {
-            logDebug('-- ${item.path.split('/').last}');
-            var imageName = item.path.split('/').last;
-
-            var labels = await ClassificationService.labelFile(item);
-            UploadService.saveFile(item, SavePath(dirName, imageName), labels);
-            count++;
-          }
-        }
-      }
-    }
-  });
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(text, style: TextStyle(fontSize: 18)),
+          Container(
+            child: ToggleSwitch(
+              activeText: activeText,
+              inactiveText: inactiveText,
+              activeColor: Theme.of(context).primaryColor,
+              isActive: status,
+              onChanged: (value) => press(() => onChange(value)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
