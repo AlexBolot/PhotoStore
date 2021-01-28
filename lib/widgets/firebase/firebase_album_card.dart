@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/28/21 3:26 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -19,14 +19,13 @@ import 'package:photo_store/widgets/future_widget.dart';
 
 class FirebaseAlbumCard extends StatelessWidget {
   final FirebaseAlbum album;
-  final Future<File> futureFile;
 
-  FirebaseAlbumCard(this.album) : futureFile = album.thumbnail;
+  FirebaseAlbumCard(this.album);
 
   @override
   Widget build(BuildContext context) {
     return FutureWidget<File>(
-      future: futureFile,
+      future: album.thumbnail,
       builder: (thumbnail) {
         return InkWell(
           onTap: () {

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:16 PM
+ . Last modified : 1/28/21 3:26 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -32,7 +32,10 @@ class FirebaseAlbum {
 
   Future<List<FirebaseFile>> get firebaseFiles async => _firebaseFiles ??= await _loadFiles();
 
-  Future<File> get thumbnail async => _thumbnail ??= await _loadThumbnail();
+  Future<File> get thumbnail async {
+    var fileAvailable = (_thumbnail != null && _thumbnail.existsSync());
+    return fileAvailable ? _thumbnail : _thumbnail ??= await _loadThumbnail();
+  }
 
   Future<List<FirebaseFile>> _loadFiles() async {
     ListResult list = await reference.listAll();
