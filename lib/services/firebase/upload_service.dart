@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/27/21 3:56 PM
+ . Last modified : 1/28/21 3:20 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -39,7 +39,7 @@ class UploadService {
     }
   }
 
-  static uploadWithLabels() async {
+  static Future<void> uploadWithLabels() async {
     Directory appDocumentsDirectory = await getExternalStorageDirectory();
     var directories = appDocumentsDirectory.listSync();
 
@@ -89,7 +89,7 @@ class UploadService {
 
   /// Uploads the labels and downloadURL of a [file] to the Firestore
   ///
-  static _uploadMetaData(SavePath savePath, String url, List<String> labels) async {
+  static Future<void> _uploadMetaData(SavePath savePath, String url, List<String> labels) async {
     DocumentReference document = _getDocument(savePath);
 
     await document.set({'downloadUrl': url});

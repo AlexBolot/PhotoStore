@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/28/21 3:20 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -19,9 +19,6 @@ class ClassificationService {
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(file);
     final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
     var labels = await labeler.processImage(visionImage);
-
-    //logDebug('----------------------');
-    //logDebug(file.path);
 
     var highAccuracy = labels.where((label) => label.confidence >= .75);
     var lowAccuracy = labels.where((label) => label.confidence < .75 && label.confidence > .50);

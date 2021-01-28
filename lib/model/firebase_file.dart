@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 1/27/21 4:46 PM
+ . Last modified : 1/28/21 3:06 PM
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -31,19 +31,18 @@ class FirebaseFile {
     this.type = _findType();
   }
 
-  Future<File> get file async => _file ??= await _loadFile();
+  Future<File> get file async {
+    var fileAvailable = (_file != null && _file.existsSync());
+    return fileAvailable ? _file : _file ??= await _loadFile();
+  }
 
-  SavePath get fullPath => SavePath(reference.parent.name, name);
+  SavePath get savePath => SavePath(reference.parent.name, name);
 
   // ------------------ Private methods ------------------ //
 
   Future<File> _loadFile() async {
-    if (_file != null)
-      return _file;
-    else {
-      var downloadUrl = await reference.getDownloadURL();
-      return _file ??= await FirebaseFileService.getFile(downloadUrl, fullPath);
-    }
+    var downloadUrl = await reference.getDownloadURL();
+    return await FirebaseFileService.getFile(downloadUrl, savePath);
   }
 
   AssetType _findType() {

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 8:05 PM
+ . Last modified : 1/28/21 3:16 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,37 +20,19 @@ class FirebaseAlbum {
   String name;
   Reference reference;
 
-  List<FirebaseFile> _files;
+  List<FirebaseFile> _firebaseFiles;
   File _thumbnail;
-  int _count;
 
   FirebaseAlbum(Reference ref) {
     this.reference = ref;
     this.name = ref.name;
   }
 
-  Future<int> get count async {
-    if (_count == null) {
-      if (_files != null) {
-        _count = _files.length;
-      } else {
-        _count = await _loadFilesCount();
-      }
-    }
+  Future<int> get count async => (await firebaseFiles).length;
 
-    return _count;
-  }
+  Future<List<FirebaseFile>> get firebaseFiles async => _firebaseFiles ??= await _loadFiles();
 
-  Future<List<FirebaseFile>> get files async {
-    return _files ??= await _loadFiles();
-  }
-
-  Future<File> get thumbnail async {
-    if (_thumbnail != null) return _thumbnail;
-
-    var firstFile = (await files).first;
-    return _thumbnail = await firstFile.file;
-  }
+  Future<File> get thumbnail async => _thumbnail ??= await _loadThumbnail();
 
   Future<List<FirebaseFile>> _loadFiles() async {
     ListResult list = await reference.listAll();
@@ -59,8 +41,8 @@ class FirebaseAlbum {
     return files;
   }
 
-  _loadFilesCount() async {
-    ListResult list = await reference.listAll();
-    return list.items.length;
+  Future<File> _loadThumbnail() async {
+    var firstFirebaseFile = (await firebaseFiles).first;
+    return await firstFirebaseFile.file;
   }
 }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:52 AM
+ . Last modified : 1/28/21 10:38 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -27,6 +27,14 @@ class GalleryService {
   static void add(folder) {
     if (folder is LocalAlbum) _localAlbums.add(folder);
     if (folder is FirebaseAlbum) _firebaseAlbums.add(folder);
+  }
+
+  static Future<List<FirebaseAlbum>> refreshFirebaseAlbums() async {
+    return _firebaseAlbums = await _loadFirebaseAlbums();
+  }
+
+  static Future<List<LocalAlbum>> refreshLocalAlbums() async {
+    return _localAlbums = await _loadLocalAlbums();
   }
 
   static Future<List<LocalAlbum>> _loadLocalAlbums() async {

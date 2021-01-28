@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/27/21 5:08 PM
+ . Last modified : 1/28/21 12:03 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -18,28 +18,21 @@ import 'package:photo_store/config.dart';
 import 'package:photo_store/services/firebase/firebase_file_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/firebase_service.dart';
-import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
 class MenuDrawer extends StatefulWidget {
-  final Function(String source) onChangeSource;
+  final Function onChange;
 
-  const MenuDrawer({Key key, this.onChangeSource}) : super(key: key);
+  const MenuDrawer({Key key, this.onChange}) : super(key: key);
 
   @override
   _MenuDrawerState createState() => _MenuDrawerState();
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
-  bool status = false;
-
   @override
   void initState() {
     super.initState();
-
-    getPreference(Preference.source).then((value) {
-      setState(() => status = Source.asBoolean(value));
-    });
   }
 
   @override
@@ -70,20 +63,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
             text: 'Charger liste firestore',
             onPress: () => FirebaseService.fetchFirestoreContent(),
           ),
-          ToggleItem(
-            text: 'Changer de source',
-            activeText: 'Firebase',
-            inactiveText: 'Local',
-            status: status,
-            onChange: (value) {
-              setState(() => status = value);
-              widget.onChangeSource(Source.fromBoolean(value));
-            },
-          ),
           SimpleItem(
             icon: Icons.delete,
             text: 'Libérer de l\'espace',
-            onPress: () => FirebaseFileService.freeSpaceOnDevice(),
+            onPress: () {
+              FirebaseFileService.freeSpaceOnDevice(Duration());
+              widget.onChange();
+            },
           ),
         ],
       ),
