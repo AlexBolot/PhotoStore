@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/27/21 3:48 PM
+ . Last modified : 2/3/21 7:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,6 +15,7 @@ import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
@@ -28,16 +29,17 @@ class DownloadService {
   static Future<List<FirebaseAlbum>> downloadAlbums() async {
     ListResult list = await _getStorageRef().listAll();
 
-    logInfo('Loaded albums from Firebase :: ${list.names.join(' - ')}');
+    var fileNames = list.fileNames;
+    logFetch('Loaded ${fileNames.length} albums from Firebase :: ${fileNames.join(', ')}');
 
-    return list.prefixes.map((ref) => FirebaseAlbum(ref)).toList();
+    return list.toFirebaseAlbums();
   }
 
   static Future<File> downloadFile(String url, SavePath savePath) async {
     HttpClientRequest request = await _httpClient.getUrl(Uri.parse(url));
     HttpClientResponse response = await request.close();
     Uint8List bytes = await consolidateHttpClientResponseBytes(response);
-    logDebug('downloaded file ${savePath.formatted}');
+    logDownload('downloaded file ${savePath.formatted}');
 
     return FirebaseFileService.saveFile(bytes, savePath);
   }
@@ -49,10 +51,4 @@ class DownloadService {
   static Reference _getStorageRef() {
     return _storage.ref(AccountService.currentAccount.name);
   }
-}
-
-extension Folders on ListResult {
-  forEach(Function(Reference folder) function) => this.prefixes.forEach(function);
-
-  List<String> get names => this.prefixes.map((ref) => ref.name).toList();
 }

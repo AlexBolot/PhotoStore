@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:26 PM
+ . Last modified : 2/3/21 7:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,6 +13,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/services/logging_service.dart';
 
@@ -39,8 +40,8 @@ class FirebaseAlbum {
 
   Future<List<FirebaseFile>> _loadFiles() async {
     ListResult list = await reference.listAll();
-    var files = list.items.map((fileReference) => FirebaseFile(fileReference)).toList();
-    logDebug("loaded ${files.length} files for album '$name'");
+    var files = list.toFirebaseFile();
+    logFetch("found ${files.length} files for album '$name'");
     return files;
   }
 

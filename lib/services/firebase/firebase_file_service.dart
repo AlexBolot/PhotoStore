@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:20 PM
+ . Last modified : 2/3/21 7:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,6 +15,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/firebase/download_service.dart';
@@ -75,7 +76,9 @@ class FirebaseFileService {
 
     // Checking if every result is successful
     var finalResult = AttemptResult(results.every((result) => result.value));
-    logResult("Deleting ${results.length} files", finalResult);
+    var successes = results.count((result) => result.value);
+
+    logResult('Deleting $successes/${results.length} files', finalResult);
     GalleryService.refreshFirebaseAlbums();
   }
 
@@ -110,10 +113,15 @@ class FirebaseFileService {
 
   static Future<void> _updateLastAccess(SavePath savePath, {bool reset = false}) async {
     DocumentReference document = _getDocument(savePath);
-    var newDate = reset ? null : DateTime.now();
 
-    await document.update({_lastAccessField: newDate});
-    logDebug('saved $_lastAccessField $newDate for ${savePath.fileName}');
+    if (reset) {
+      await document.update({_lastAccessField: null});
+      logUpdate('reset $_lastAccessField for ${savePath.fileName}');
+    } else {
+      var newDate = DateTime.now();
+      await document.update({_lastAccessField: newDate});
+      logUpdate('saved $_lastAccessField ${newDate.toEuropeanFormat()} for ${savePath.fileName}');
+    }
   }
 
   static DocumentReference _getDocument(SavePath savePath) {
