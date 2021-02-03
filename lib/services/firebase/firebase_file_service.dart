@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:12 PM
+ . Last modified : 2/3/21 7:17 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -35,7 +35,6 @@ class FirebaseFileService {
     if (localFile.existsSync()) {
       return localFile;
     } else {
-      logDebug('must download ${savePath.formatted}');
       var downloadUrl = await reference.getDownloadURL();
       return await DownloadService.downloadFile(downloadUrl, savePath);
     }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:12 PM
+ . Last modified : 2/3/21 7:17 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -22,7 +22,7 @@ logInfo(message) => logger.fine('ℹ️ $message');
 
 logWarning(message) => logger.warning('WARNING : $message');
 
-logStep(message) => logger.info('✅ $message');
+logStep(message) => logger.info('ℹ️ $message');
 
 // ----- Specialized loggers ------ //
 
