@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/25/21 10:48 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,7 +15,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/firebase_file.dart';
-import 'package:photo_store/views/firebase_media_view.dart';
+import 'package:photo_store/views/media_view.dart';
 import 'package:photo_store/widgets/future_widget.dart';
 
 class FirebaseMediaCard extends StatefulWidget {
@@ -44,7 +44,7 @@ class _FirebaseMediaCardState extends State<FirebaseMediaCard> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => FirebaseMediaView(futureFile: futureFile, type: type)),
+          MaterialPageRoute(builder: (_) => MediaView(futureFile: futureFile, type: type)),
         );
       },
       child: Card(

@@ -87,7 +87,7 @@ class UploadService {
     return await fileReference.getDownloadURL();
   }
 
-  /// Uploads the labels and downloadURL of a [file] to the Firestore
+  /// Uploads the labels and downloadURL of a [futureFile] to the Firestore
   ///
   static Future<void> _uploadMetaData(SavePath savePath, String url, List<String> labels) async {
     DocumentReference document = _getDocument(savePath);

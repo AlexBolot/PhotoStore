@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/25/21 10:48 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,18 +20,18 @@ import 'package:photo_store/widgets/future_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class MediaView extends StatelessWidget {
-  final Future<File> file;
+  final Future<File> futureFile;
   final AssetType type;
 
-  const MediaView({@required this.file, @required this.type});
+  const MediaView({@required this.futureFile, @required this.type});
 
   @override
   Widget build(BuildContext context) {
     switch (type) {
       case AssetType.image:
-        return ImageScreen(file: file);
+        return ImageScreen(futureFile);
       case AssetType.video:
-        return VideoScreen(file: file);
+        return VideoScreen(file: futureFile);
       default:
         return Container(child: Center(child: Text("Can't display this type of file")));
     }
@@ -39,21 +39,22 @@ class MediaView extends StatelessWidget {
 }
 
 class ImageScreen extends StatelessWidget {
-  final Future<File> file;
+  final Future<File> futureFile;
 
-  const ImageScreen({@required this.file});
+  const ImageScreen(this.futureFile);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
             Container(
               color: Colors.black,
               alignment: Alignment.center,
               child: FutureWidget<File>(
-                future: file,
+                future: futureFile,
                 builder: (file) => Image.file(file),
               ),
             ),
@@ -61,7 +62,7 @@ class ImageScreen extends StatelessWidget {
               label: Text('Analyse'),
               icon: Icon(Icons.settings),
               onPressed: () async {
-                final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(await file);
+                final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(await futureFile);
                 final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
 
                 var labels = await labeler.processImage(visionImage);
