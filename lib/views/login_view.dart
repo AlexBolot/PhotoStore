@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/22/21 11:05 PM
+ . Last modified : 2/3/21 6:31 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,7 +13,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
-import 'package:photo_store/config.dart';
+import 'package:photo_store/global.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/services/preference_service.dart';
@@ -39,7 +39,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    _autoLogin().then((result) => logResult('Email-login', result));
+    _autoLogin().then((result) => logResult('Auto-login', result));
   }
 
   @override

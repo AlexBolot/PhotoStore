@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 1/28/21 11:28 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -43,7 +43,7 @@ class _FirebaseAlbumViewState extends State<FirebaseAlbumView> {
         title: Text(album.name),
       ),
       body: FutureWidget<List<FirebaseFile>>(
-        future: album.files,
+        future: album.firebaseFiles,
         builder: (files) {
           return GridView.count(
             crossAxisCount: 2,

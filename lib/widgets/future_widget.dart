@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 8:01 PM
+ . Last modified : 1/28/21 3:10 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -67,15 +67,17 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(maxHeight: 100, maxWidth: 100),
-      child: LiquidCircularProgressIndicator(
-        value: animation.value,
-        backgroundColor: Colors.white,
-        borderColor: Colors.blue,
-        borderWidth: 5.0,
-        direction: Axis.vertical,
-        center: Text('Chargement...', style: TextStyle(fontSize: 18)),
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(maxHeight: 100, maxWidth: 100),
+        child: LiquidCircularProgressIndicator(
+          value: animation.value,
+          backgroundColor: Colors.white,
+          borderColor: Colors.blue,
+          borderWidth: 5.0,
+          direction: Axis.vertical,
+          center: Text('Chargement...'),
+        ),
       ),
     );
   }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:42 AM
+ . Last modified : 1/28/21 11:01 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -23,13 +23,11 @@ class Source {
   static const String firebaseStorage = 'firebase';
   static const String localStorage = 'local';
 
-  static bool asBoolean(String source) {
-    return source == firebaseStorage;
-  }
+  static const List<String> values = [localStorage, firebaseStorage];
 
-  static String fromBoolean(bool value) {
-    return value ? firebaseStorage : localStorage;
-  }
+  static int indexOf(String source) => values.indexOf(source);
+
+  static String fromIndex(int index) => values[index];
 }
 
 SharedPreferences pref;

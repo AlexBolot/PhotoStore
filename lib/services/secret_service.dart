@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/19/21 10:01 AM
+ . Last modified : 2/3/21 7:06 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -26,7 +26,9 @@ class SecretService {
     return Account.fromJSON(jsonUser);
   }
 
-  static _fetchData(String path) async {
+  // ------------------ Private methods ------------------ //
+
+  static Future<dynamic> _fetchData(String path) async {
     var stringData = await rootBundle.loadString(path);
     return json.decode(stringData);
   }
