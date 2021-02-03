@@ -5,19 +5,18 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 12:03 PM
+ . Last modified : 2/3/21 7:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:photo_store/config.dart';
+import 'package:photo_store/global.dart';
+import 'package:photo_store/services/firebase/download_service.dart';
 import 'package:photo_store/services/firebase/firebase_file_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
-import 'package:photo_store/services/firebase_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
 class MenuDrawer extends StatefulWidget {
@@ -61,7 +60,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
           SimpleItem(
             icon: Icons.list_alt_rounded,
             text: 'Charger liste firestore',
-            onPress: () => FirebaseService.fetchFirestoreContent(),
+            onPress: () => DownloadService.downloadAlbums(),
           ),
           SimpleItem(
             icon: Icons.delete,

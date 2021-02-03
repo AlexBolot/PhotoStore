@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:26 PM
+ . Last modified : 2/3/21 6:34 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,6 +13,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:photo_store/global.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/views/firebase_album_view.dart';
 import 'package:photo_store/widgets/future_widget.dart';
@@ -28,14 +29,14 @@ class FirebaseAlbumCard extends StatelessWidget {
       future: album.thumbnail,
       builder: (thumbnail) {
         return InkWell(
-          onTap: () {
+          onTap: () => press(() {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => FirebaseAlbumView(album),
               ),
             );
-          },
+          }),
           child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 10:38 AM
+ . Last modified : 2/3/21 7:12 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,7 +14,6 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/local_album.dart';
 import 'package:photo_store/services/firebase/download_service.dart';
-import 'package:photo_store/services/logging_service.dart';
 
 class GalleryService {
   static List<LocalAlbum> _localAlbums;
@@ -37,6 +36,8 @@ class GalleryService {
     return _localAlbums = await _loadLocalAlbums();
   }
 
+  // ------------------ Private methods ------------------ //
+
   static Future<List<LocalAlbum>> _loadLocalAlbums() async {
     final assetPathList = await PhotoManager.getAssetPathList();
 
@@ -52,7 +53,6 @@ class GalleryService {
   }
 
   static Future<List<FirebaseAlbum>> _loadFirebaseAlbums() async {
-    logDebug('require firebase Albums');
     return await DownloadService.downloadAlbums();
   }
 }

@@ -21,21 +21,21 @@ class FirebaseAlbum {
   Reference reference;
 
   List<FirebaseFile> _firebaseFiles;
-  File _thumbnail;
 
   FirebaseAlbum(Reference ref) {
     this.reference = ref;
     this.name = ref.name;
   }
 
+  // ------------------ Getters ------------------ //
+
   Future<int> get count async => (await firebaseFiles).length;
 
   Future<List<FirebaseFile>> get firebaseFiles async => _firebaseFiles ??= await _loadFiles();
 
-  Future<File> get thumbnail async {
-    var fileAvailable = (_thumbnail != null && _thumbnail.existsSync());
-    return fileAvailable ? _thumbnail : _thumbnail ??= await _loadThumbnail();
-  }
+  Future<File> get thumbnail async => await _loadThumbnail();
+
+  // ------------------ Private methods ------------------ //
 
   Future<List<FirebaseFile>> _loadFiles() async {
     ListResult list = await reference.listAll();

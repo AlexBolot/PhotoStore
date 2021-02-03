@@ -1,11 +1,11 @@
 /*..............................................................................
  . Copyright (c)
  .
- . The config.dart class was created by : Alex Bolot and Pierre Bolot
+ . The global.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 6:37 PM
+ . Last modified : 2/3/21 6:31 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/

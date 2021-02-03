@@ -13,6 +13,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
@@ -24,7 +25,7 @@ class FirebaseFileService {
   static String _localAppDirectory;
   static String _lastAccessField = 'last_access';
 
-  static Future<File> getFile(String downloadUrl, SavePath savePath) async {
+  static Future<File> getFile(Reference reference, SavePath savePath) async {
     _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
 
     var localFile = File(_localAppDirectory + '/' + savePath.formatted);
@@ -34,6 +35,7 @@ class FirebaseFileService {
       return localFile;
     } else {
       logDebug('must download ${savePath.formatted}');
+      var downloadUrl = await reference.getDownloadURL();
       return await DownloadService.downloadFile(downloadUrl, savePath);
     }
   }

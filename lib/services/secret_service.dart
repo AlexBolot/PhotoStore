@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:20 PM
+ . Last modified : 2/3/21 7:06 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -25,6 +25,8 @@ class SecretService {
     var jsonUser = await _fetchData('secrets/firebaseUser.json');
     return Account.fromJSON(jsonUser);
   }
+
+  // ------------------ Private methods ------------------ //
 
   static Future<dynamic> _fetchData(String path) async {
     var stringData = await rootBundle.loadString(path);
