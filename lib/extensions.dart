@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:12 PM
+ . Last modified : 2/4/21 12:14 AM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -42,5 +42,11 @@ extension EuropeanFormat on DateTime {
     var sec = '${this.second < 10 ? '0' : ''}${this.second}';
 
     return '{$day/$month/$year $hour:$min:$sec}';
+  }
+}
+
+extension GetOrDefault on Map<String, dynamic> {
+  dynamic get(String key, {orDefault}) {
+    return this.containsKey(key) ? this[key] : orDefault;
   }
 }

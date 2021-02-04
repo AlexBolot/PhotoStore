@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:17 PM
+ . Last modified : 2/4/21 4:35 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -19,18 +19,18 @@ import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/firebase/download_service.dart';
-import 'package:photo_store/services/gallery_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 
 class FirebaseFileService {
   static String _localAppDirectory;
   static String _lastAccessField = 'last_access';
+  static String _labelsField = 'labels';
 
   static Future<File> getFile(Reference reference, SavePath savePath) async {
     _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
 
     var localFile = File(_localAppDirectory + '/' + savePath.formatted);
-    _updateLastAccess(savePath);
+    updateLastAccess(savePath);
 
     if (localFile.existsSync()) {
       return localFile;
@@ -55,62 +55,30 @@ class FirebaseFileService {
     return file;
   }
 
-  static Future<void> freeSpaceOnDevice([Duration delay = const Duration(days: 30)]) async {
-    var albums = await DownloadService.downloadAlbums();
-
-    List<AttemptResult> results = [];
-
-    for (var album in albums) {
-      var firebaseFiles = await album.firebaseFiles;
-
-      for (var firebaseFile in firebaseFiles) {
-        var lastAccess = await getLastAccess(firebaseFile.savePath);
-        var thirtyDaysAgo = DateTime.now().subtract(delay);
-
-        if (lastAccess != null && lastAccess.isBefore(thirtyDaysAgo)) {
-          results.add(await deleteLocalCopy(firebaseFile.savePath));
-        }
-      }
-    }
-
-    // Checking if every result is successful
-    var finalResult = AttemptResult(results.every((result) => result.value));
-    var successes = results.count((result) => result.value);
-
-    logResult('Deleting $successes/${results.length} files', finalResult);
-    GalleryService.refreshFirebaseAlbums();
-  }
-
-  static Future<AttemptResult> deleteLocalCopy(SavePath savePath) async {
-    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
-
-    var file = File(_localAppDirectory + '/' + savePath.formatted);
-
-    if (file.existsSync()) {
-      file.deleteSync();
-      _updateLastAccess(savePath, reset: true);
-      return AttemptResult.success;
-    }
-
-    return AttemptResult.fail;
-  }
-
   /// May return null
   static Future<DateTime> getLastAccess(SavePath savePath) async {
     DocumentReference document = _getDocument(savePath);
-    Map<String, dynamic> data = (await document.get()).data();
+    var content = (await document.get()).data();
 
-    if (data.containsKey(_lastAccessField)) {
-      Timestamp lastAccess = data[_lastAccessField];
-      return lastAccess?.toDate();
-    } else {
-      return null;
-    }
+    // Returns a Timestamp.toDate or null
+    return content.get(_lastAccessField)?.toDate();
   }
 
-  // ------------------ Private methods ------------------ //
+  static Future<List<String>> getLabels(SavePath savePath) async {
+    DocumentReference document = _getDocument(savePath);
+    var content = (await document.get()).data();
+    var labels = content.get(_labelsField, orDefault: []).cast<String>();
+    logFetch('fetching labels : $labels');
 
-  static Future<void> _updateLastAccess(SavePath savePath, {bool reset = false}) async {
+    return labels;
+  }
+
+  static Future<void> setLabels(SavePath savePath, List<String> labels) async {
+    DocumentReference document = _getDocument(savePath);
+    document.update({_labelsField: labels});
+  }
+
+  static Future<void> updateLastAccess(SavePath savePath, {bool reset = false}) async {
     DocumentReference document = _getDocument(savePath);
 
     if (reset) {
@@ -122,6 +90,8 @@ class FirebaseFileService {
       logUpdate('saved $_lastAccessField ${newDate.toEuropeanFormat()} for ${savePath.fileName}');
     }
   }
+
+  // ------------------ Private methods ------------------ //
 
   static DocumentReference _getDocument(SavePath savePath) {
     var firestore = FirebaseFirestore.instance;
