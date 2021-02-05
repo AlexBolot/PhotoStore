@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/4/21 7:06 PM
+ . Last modified : 2/4/21 11:57 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/firebase_file.dart';
+import 'package:photo_store/widgets/firebase/firebase_media_info.dart';
 import 'package:photo_store/widgets/future_widget.dart';
 import 'package:video_player/video_player.dart';
 
@@ -55,14 +56,19 @@ class _ImageScreenState extends State<ImageScreen> {
   }
 
   _handleVerticalDrag() {
-    if (lastVerticalDelta < -3.0) {
-      showMenu(context, widget.firebaseFile);
-    }
+    if (lastVerticalDelta > -3.0) return;
+
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => FirebaseMediaInfo(firebaseFile: widget.firebaseFile),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: GestureDetector(
           onDoubleTap: () => Navigator.of(context).pop(),
@@ -171,48 +177,4 @@ class _VideoScreenState extends State<VideoScreen> {
       ),
     );
   }
-}
-
-showMenu(context, FirebaseFile firebaseFile) async {
-  showModalBottomSheet(
-    backgroundColor: Colors.transparent,
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(builder: (context, setModalState) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white54,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
-            ),
-          ),
-          padding: EdgeInsets.only(top: 8),
-          child: Column(
-            children: <Widget>[
-              FutureWidget<List<String>>(
-                future: firebaseFile.labels,
-                builder: (labels) {
-                  return Wrap(
-                    spacing: 8,
-                    children: labels.map((label) {
-                      return Chip(
-                        label: Text(label),
-                        deleteIcon: Icon(Icons.close),
-                        onDeleted: () {
-                          print('deleted $label');
-                          firebaseFile.removeLabel(label);
-                          setModalState(() {});
-                        },
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      });
-    },
-  );
 }

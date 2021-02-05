@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/2/21 10:49 AM
+ . Last modified : 2/5/21 3:45 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter_stash/flutter_stash.dart';
 import 'package:logging/logging.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/services/account_service.dart';
+import 'package:photo_store/services/firebase/firebase_label_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
@@ -59,6 +60,7 @@ buildSplashScreen(String title) {
     loadFunctions: [
       () async => await PhotoManager.requestPermission(),
       () async => await AccountService.loginToFirebase().then((result) => logResult('Firebase login', result)),
+      () async => await FirebaseLabelService.fetchAllLabels(),
     ],
   );
 }
