@@ -29,11 +29,6 @@ class FirebaseAlbumView extends StatefulWidget {
 
 class _FirebaseAlbumViewState extends State<FirebaseAlbumView> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var album = widget.album;
 

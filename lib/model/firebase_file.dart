@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 2/5/21 5:34 PM
+ . Last modified : 06/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -48,6 +48,10 @@ class FirebaseFile {
   void removeLabel(String label) {
     FirebaseLabelService.saveFileLabels(savePath, _labels..remove(label));
     FirebaseLabelService.deleteGlobalLabel(label);
+  }
+
+  Future<bool> hasLabel(String label) async {
+    return (await labels).contains(label);
   }
 
   // ------------------ Private methods ------------------ //
