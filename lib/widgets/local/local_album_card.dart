@@ -5,18 +5,17 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 5:27 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/model/local_album.dart';
-import 'package:photo_store/views/local_album_view.dart';
-import 'package:photo_store/widgets/future_widget.dart';
+import 'package:photo_store/views/local/local_album_view.dart';
 
 class LocalAlbumCard extends StatefulWidget {
   final LocalAlbum album;

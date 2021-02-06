@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/4/21 7:20 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,10 +13,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/firebase_file.dart';
-import 'package:photo_store/views/firebase_media_view.dart';
-import 'package:photo_store/widgets/future_widget.dart';
+import 'package:photo_store/views/firebase/firebase_media_view.dart';
 
 class FirebaseMediaCard extends StatefulWidget {
   final FirebaseFile firebaseFile;

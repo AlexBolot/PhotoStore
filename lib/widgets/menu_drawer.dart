@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/4/21 7:20 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,15 +14,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_store/global.dart';
-import 'package:photo_store/services/cache_service.dart';
-import 'package:photo_store/services/firebase/download_service.dart';
-import 'package:photo_store/services/firebase/upload_service.dart';
+import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
 class MenuDrawer extends StatefulWidget {
-  final Function onChange;
+  final Function updateParent;
 
-  const MenuDrawer({Key key, this.onChange}) : super(key: key);
+  const MenuDrawer({this.updateParent});
 
   @override
   _MenuDrawerState createState() => _MenuDrawerState();
@@ -32,6 +30,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
   @override
   void initState() {
     super.initState();
+  }
+
+  changeSource(String value) {
+    Source.select(value);
+    widget.updateParent();
+    setState(() {});
   }
 
   @override
@@ -52,24 +56,34 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ),
             ),
           ),
-          SimpleItem(
+          Title(child: Text('Photo Source'), color: Colors.yellow),
+          RadioItem(
+            text: 'Firebase',
+            value: Source.firebaseStorage,
+            groupValue: Source.currentSource,
+            onChanged: (value) => changeSource(value),
+            onTap: () => changeSource(Source.firebaseStorage),
+          ),
+          RadioItem(
+            text: 'Local',
+            value: Source.localStorage,
+            groupValue: Source.currentSource,
+            onChanged: (value) => changeSource(value),
+            onTap: () => changeSource(Source.localStorage),
+          ),
+          /*SimpleItem(
             icon: Icons.upload_sharp,
             text: 'Upload with labels',
             onPress: () => UploadService.uploadWithLabels(),
-          ),
-          SimpleItem(
-            icon: Icons.list_alt_rounded,
-            text: 'Charger liste firestore',
-            onPress: () => DownloadService.downloadAlbums(),
-          ),
-          SimpleItem(
+          ),*/
+          /*SimpleItem(
             icon: Icons.delete,
             text: 'Libérer de l\'espace',
             onPress: () {
               CacheService.freeSpaceOnDevice(Duration());
               widget.onChange();
             },
-          ),
+          ),*/
         ],
       ),
     );
@@ -80,8 +94,9 @@ class SimpleItem extends StatelessWidget {
   final IconData icon;
   final String text;
   final Function onPress;
+  final bool selected;
 
-  const SimpleItem({Key key, this.icon, this.text, this.onPress}) : super(key: key);
+  const SimpleItem({this.icon, this.text = '', this.onPress, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +105,7 @@ class SimpleItem extends StatelessWidget {
       leading: Icon(icon),
       title: Text(text),
       onTap: () => press(onPress),
+      selected: selected,
     );
   }
 }
@@ -123,6 +139,29 @@ class ToggleItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class RadioItem extends StatelessWidget {
+  final ValueChanged<String> onChanged;
+  final String value;
+  final String groupValue;
+  final Function onTap;
+  final String text;
+
+  const RadioItem({this.onChanged, this.value, this.groupValue, this.onTap, this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(text),
+      leading: Radio(
+        value: value,
+        groupValue: groupValue,
+        onChanged: onChanged,
+      ),
+      onTap: () => press(() => onTap()),
     );
   }
 }
