@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 6:31 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -135,7 +135,7 @@ class _LoginViewState extends State<LoginView> {
       setPreference(Preference.email, email);
       setPreference(Preference.password, password);
 
-      Navigator.of(context).pushNamed(SplashScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(SplashScreen.routeName);
     }
 
     return AttemptResult(isVerified);
@@ -152,7 +152,7 @@ class _LoginViewState extends State<LoginView> {
     bool isVerified = await AccountService.verifyAccount(email, password);
 
     if (isVerified) {
-      Navigator.of(context).pushNamed(SplashScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(SplashScreen.routeName);
     }
 
     return AttemptResult(isVerified);

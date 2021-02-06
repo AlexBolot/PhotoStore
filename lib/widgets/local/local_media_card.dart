@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:50 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,11 +13,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/views/media_view.dart';
-import 'package:photo_store/widgets/future_widget.dart';
+import 'package:photo_store/views/local/local_media_view.dart';
 
 class LocalMediaCard extends StatefulWidget {
   final AssetEntity media;
@@ -51,7 +50,7 @@ class _LocalMediaCardState extends State<LocalMediaCard> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MediaView(futureFile: futureFile, type: type),
+                builder: (context) => LocalMediaView(futureFile: futureFile, type: type),
               ),
             );
           },

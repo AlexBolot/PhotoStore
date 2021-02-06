@@ -5,13 +5,14 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:12 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/model/firebase_album.dart';
+import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/model/local_album.dart';
 import 'package:photo_store/services/firebase/download_service.dart';
 
@@ -26,6 +27,17 @@ class GalleryService {
   static void add(folder) {
     if (folder is LocalAlbum) _localAlbums.add(folder);
     if (folder is FirebaseAlbum) _firebaseAlbums.add(folder);
+  }
+
+  static Future<List<FirebaseFile>> filterFirebaseFiles(String filter) async {
+    List<FirebaseFile> result = [];
+
+    var albums = await firebaseAlbums;
+    for (var album in albums) {
+      result.addAll(await album.filter(filter));
+    }
+
+    return result;
   }
 
   static Future<List<FirebaseAlbum>> refreshFirebaseAlbums() async {

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 6:34 PM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,10 +13,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/global.dart';
 import 'package:photo_store/model/firebase_album.dart';
-import 'package:photo_store/views/firebase_album_view.dart';
-import 'package:photo_store/widgets/future_widget.dart';
+import 'package:photo_store/views/firebase/firebase_album_view.dart';
 
 class FirebaseAlbumCard extends StatelessWidget {
   final FirebaseAlbum album;
@@ -73,15 +73,3 @@ class FirebaseAlbumCard extends StatelessWidget {
     );
   }
 }
-
-/*
-
-CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: downloadUrl,
-                  progressIndicatorBuilder: (context, url, downloadProgress) {
-                    return CircularProgressIndicator(value: downloadProgress.progress);
-                  },
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
- */

@@ -5,17 +5,16 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 11:28 AM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/widgets/firebase/firebase_media_card.dart';
-import 'package:photo_store/widgets/future_widget.dart';
 
 class FirebaseAlbumView extends StatefulWidget {
   static const String routeName = '/FirebaseAlbumView';
@@ -29,11 +28,6 @@ class FirebaseAlbumView extends StatefulWidget {
 }
 
 class _FirebaseAlbumViewState extends State<FirebaseAlbumView> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     var album = widget.album;

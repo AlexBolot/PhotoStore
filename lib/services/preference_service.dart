@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 11:01 AM
+ . Last modified : 06/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,19 +20,50 @@ class Preference {
 }
 
 class Source {
-  static const String firebaseStorage = 'firebase';
   static const String localStorage = 'local';
+  static const String firebaseStorage = 'firebase';
 
-  static const List<String> values = [localStorage, firebaseStorage];
+  static String _currentSource;
 
-  static int indexOf(String source) => values.indexOf(source);
+  static String get currentSource => _currentSource;
 
-  static String fromIndex(int index) => values[index];
+  static Future init() async {
+    _currentSource = await getPreference(Preference.source, orDefault: Source.firebaseStorage);
+  }
+
+  static select(String source) {
+    _currentSource = source;
+    setPreference(Preference.source, _currentSource);
+  }
+
+  static int indexOf(String source) {
+    switch (source) {
+      case localStorage:
+        return 0;
+      case firebaseStorage:
+        return 1;
+      default:
+        throw 'No Source matches $source';
+    }
+  }
+
+  static String fromIndex(int index) {
+    switch (index) {
+      case 0:
+        return localStorage;
+      case 1:
+        return firebaseStorage;
+      default:
+        throw 'No Source matches index $index';
+    }
+  }
 }
 
+/// Global photo source shared through the App (Local or Firebase)
+String currentSource;
 SharedPreferences pref;
 
-setPreference(String key, String value) async {
+Future setPreference(String key, String value) async {
   pref ??= await SharedPreferences.getInstance();
 
   logInfo('Setting Preference -> $key :: $value');
