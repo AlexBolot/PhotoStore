@@ -25,13 +25,16 @@ import 'package:photo_store/services/logging_service.dart';
 class FirebaseFileService {
   static String _localAppDirectory;
   static String _lastAccessField = 'last_access';
+  static FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  static String get _userName => AccountService.currentAccount.name;
 
   // ------------------ Get/Save File ------------------ //
 
   static Future<File> getFile(Reference reference, SavePath savePath) async {
     _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
 
-    var localFile = File(_localAppDirectory + '/' + savePath.formatted);
+    var localFile = File(_localAppDirectory + '/' + savePath.fileName);
     saveLastAccess(savePath);
 
     if (localFile.existsSync()) {
@@ -46,24 +49,21 @@ class FirebaseFileService {
     HttpClientRequest request = await HttpClient().getUrl(Uri.parse(url));
     HttpClientResponse response = await request.close();
     Uint8List bytes = await consolidateHttpClientResponseBytes(response);
-    logDownload('downloaded file ${savePath.formatted}');
+    logDownload('downloaded file ${savePath.fileName}');
 
-    return FirebaseFileService.saveFile(bytes, savePath);
+    return saveFile(bytes, savePath);
   }
 
   static Future<File> saveFile(List<int> bytes, SavePath savePath) async {
-    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
-    var directory = Directory(_localAppDirectory + '/' + savePath.directory);
+    var directory = await _getLocalDirectory();
 
     if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
 
-    var file = File(directory.path + '/' + savePath.fileName);
+    var path = directory.path + '/' + savePath.fileName;
 
-    file.writeAsBytesSync(bytes);
-
-    return file;
+    return File(path)..writeAsBytesSync(bytes);
   }
 
   // ------------------ Get/Save Last Access ------------------ //
@@ -93,10 +93,13 @@ class FirebaseFileService {
   // ------------------ Private methods ------------------ //
 
   static DocumentReference _getDocument(SavePath savePath) {
-    var firestore = FirebaseFirestore.instance;
-    var collectionName = '${AccountService.currentAccount.name}_${savePath.directory}';
-    var collection = firestore.collection(collectionName);
-
+    var collectionName = '${_userName}_${savePath.directory}';
+    var collection = _firestore.collection(collectionName);
     return collection.doc(savePath.fileName);
+  }
+
+  static Future<Directory> _getLocalDirectory() async {
+    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
+    return Directory(_localAppDirectory);
   }
 }
