@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/6/21 12:44 AM
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -44,7 +44,10 @@ class FirebaseLabelService {
     logFetch('fetching all labels : $_globalLabels');
   }
 
-  static List<String> getGlobalLabels() => _globalLabels.keys.toList()..sort();
+  static List<String> getGlobalLabels() {
+    fetchAllLabels();
+    return _globalLabels.keys.toList()..sort();
+  }
 
   static void addGlobalLabel(String label) {
     DocumentReference document = _getGlobalLabelsDocument();
@@ -71,7 +74,7 @@ class FirebaseLabelService {
 
   static DocumentReference _getDocument(SavePath savePath) {
     var firestore = FirebaseFirestore.instance;
-    var collectionName = '${AccountService.currentAccount.name}_${savePath.directory}';
+    var collectionName = '${AccountService.currentAccount.name}';
     var collection = firestore.collection(collectionName);
 
     return collection.doc(savePath.fileName);

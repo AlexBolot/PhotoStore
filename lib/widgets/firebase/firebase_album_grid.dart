@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:photo_store/model/firebase_album.dart';
-import 'package:photo_store/services/gallery_service.dart';
+import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/views/firebase/firebase_filtered_view.dart';
 import 'package:photo_store/widgets/firebase/filter_action_button.dart';
 import 'package:photo_store/widgets/firebase/firebase_album_card.dart';
@@ -60,13 +60,13 @@ class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
           actions: [FilterActionButton(onSelect: (value) => changeFilter(value))],
         ),
         body: FutureWidget<List<FirebaseAlbum>>(
-          future: GalleryService.firebaseAlbums,
+          future: FirebaseAlbumService.albums,
           builder: (albums) {
             return LiquidPullToRefresh(
               animSpeedFactor: 2,
               springAnimationDurationInMilliseconds: 400,
               showChildOpacityTransition: false,
-              onRefresh: () => GalleryService.refreshFirebaseAlbums(),
+              onRefresh: () => FirebaseAlbumService.refresh(),
               child: GridView.count(
                 crossAxisCount: 2,
                 padding: EdgeInsets.all(4),

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,7 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/model/firebase_file.dart';
-import 'package:photo_store/services/gallery_service.dart';
+import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/widgets/firebase/filter_action_button.dart';
 import 'package:photo_store/widgets/firebase/firebase_media_card.dart';
 
@@ -45,7 +45,7 @@ class _FirebaseFilteredViewState extends State<FirebaseFilteredView> {
         actions: [FilterActionButton(onSelect: (value) => widget.onChangeFilter(value))],
       ),
       body: FutureWidget<List<FirebaseFile>>(
-        future: GalleryService.filterFirebaseFiles(widget.filter),
+        future: FirebaseAlbumService.filter(widget.filter),
         builder: (files) {
           return GridView.count(
             crossAxisCount: 2,

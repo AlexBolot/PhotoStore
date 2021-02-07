@@ -5,28 +5,10 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/5/21 5:34 PM
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
-
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:photo_store/model/firebase_album.dart';
-import 'package:photo_store/model/firebase_file.dart';
-
-extension Folders on ListResult {
-  forEach(Function(Reference folder) function) => this.prefixes.forEach(function);
-
-  List<String> get fileNames => this.prefixes.map((ref) => ref.name).toList();
-
-  List<FirebaseAlbum> toFirebaseAlbums() {
-    return this.prefixes.map((ref) => FirebaseAlbum(ref)).toList();
-  }
-
-  List<FirebaseFile> toFirebaseFile() {
-    return this.items.map((ref) => FirebaseFile(ref)).toList();
-  }
-}
 
 extension Count<E> on Iterable<E> {
   int count(bool test(E element)) => this.where(test).length;
@@ -45,18 +27,39 @@ extension EuropeanFormat on DateTime {
   }
 }
 
-extension GetOrDefault on Map<String, dynamic> {
-  dynamic get(String key, {orDefault}) {
+extension MapExtension<A, B> on Map<A, B> {
+  B get(A key, {B orDefault}) {
     return this.containsKey(key) ? this[key] : orDefault;
+  }
+
+  List<dynamic> reduce(dynamic mapper(A key, B value)) {
+    return this.keys.map((key) => mapper(key, this[key])).toList();
   }
 }
 
-extension AddNew<T> on List<T> {
+extension ListExtension<T> on List<T> {
   /// Adds a new item only if not null and not already contained
   List<T> addNew(T value) {
     if (value != null && !this.contains(value)) {
       this.add(value);
     }
     return this;
+  }
+
+  Future<List> addIfAsync(T value, Future<bool> test(T value)) async {
+    if (await test(value)) add(value);
+    return this;
+  }
+
+  Future<List<dynamic>> mapAsync(Future<dynamic> mapper(T value)) async {
+    List<T> result = [];
+    await Future.forEach(this, (item) async => result.add(await mapper(item)));
+    return result;
+  }
+
+  Future<List<T>> whereAsync(Future<bool> test(T item)) async {
+    List<T> result = [];
+    forEach((item) => result.addIfAsync(item, test));
+    return result;
   }
 }

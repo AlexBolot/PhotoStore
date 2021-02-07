@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/25/21 10:42 AM
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,14 +16,14 @@ import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/services/secret_service.dart';
 
 class AccountService {
-  static final _auth = FirebaseAuth.instance;
   static Account currentAccount;
 
   static Future<AttemptResult> loginToFirebase() async {
     var user = await SecretService.firebaseAccount;
+    var auth = FirebaseAuth.instance;
 
     try {
-      await _auth.signInWithEmailAndPassword(email: user.email, password: user.password);
+      await auth.signInWithEmailAndPassword(email: user.email, password: user.password);
       return AttemptResult.success;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
