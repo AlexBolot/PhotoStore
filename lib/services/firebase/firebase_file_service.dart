@@ -71,7 +71,7 @@ class FirebaseFileService {
   /// May return null
   static Future<DateTime> getLastAccess(SavePath savePath) async {
     DocumentReference document = _getDocument(savePath);
-    var content = (await document.get()).data();
+    var content = (await document.get()).data() ?? {};
 
     // Returns a Timestamp.toDate or null
     return content.get(_lastAccessField)?.toDate();

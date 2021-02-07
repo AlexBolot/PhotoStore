@@ -31,10 +31,6 @@ extension MapExtension<A, B> on Map<A, B> {
   B get(A key, {B orDefault}) {
     return this.containsKey(key) ? this[key] : orDefault;
   }
-
-  List<dynamic> reduce(dynamic mapper(A key, B value)) {
-    return this.keys.map((key) => mapper(key, this[key])).toList();
-  }
 }
 
 extension ListExtension<T> on List<T> {

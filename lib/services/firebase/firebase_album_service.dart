@@ -38,7 +38,7 @@ class FirebaseAlbumService {
     var albumsMap = await _getAlbumsMap();
 
     logFetch('Loaded ${albumsMap.length} albums from Firebase :: ${albumsMap.values.join(', ')}');
-    return albumsMap.reduce((name, fileNames) => FirebaseAlbum(name, fileNames));
+    return albumsMap.keys.map((key) => FirebaseAlbum(key, albumsMap[key])).toList();
   }
 
   /// Adds a firebaseFile to a remote firestore album
@@ -58,7 +58,11 @@ class FirebaseAlbumService {
 
   static Future<Map<String, List<String>>> _getAlbumsMap() async {
     DocumentReference document = _getAlbumsDocument();
-    var content = (await document.get()).data();
-    return Map<String, List<String>>.from(content);
+    Map<String, dynamic> content = (await document.get()).data();
+
+    Map<String, List<String>> result = {};
+    content.forEach((key, value) => result.putIfAbsent(key, () => value.cast<String>()));
+
+    return result;
   }
 }

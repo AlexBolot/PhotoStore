@@ -19,7 +19,6 @@ import 'package:photo_store/extensions.dart';
 import 'package:photo_store/global.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
-import 'package:photo_store/services/classification_service.dart';
 import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 
@@ -73,8 +72,7 @@ class UploadService {
           if (item is File && _isImage(imageName)) {
             logDebug('-- $imageName');
 
-            var labels = await ClassificationService.labelFile(item);
-            var result = await uploadFile(item, SavePath(dirName, imageName), labels);
+            var result = await uploadFile(item, SavePath(dirName, imageName));
             results.add(result);
             count++;
           }
@@ -103,7 +101,7 @@ class UploadService {
   static Future<void> _uploadMetaData(SavePath savePath, List<String> labels) async {
     DocumentReference document = _firestore.collection(_userName).doc(savePath.fileName);
 
-    await document.update({'labels': labels});
+    await document.set({'labels': labels});
     logDebug('Saved labels ${labels.join(' ')}');
   }
 

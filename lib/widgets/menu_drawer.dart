@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_store/global.dart';
+import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/widgets/toggle_switch.dart';
 
@@ -71,11 +72,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
             onChanged: (value) => changeSource(value),
             onTap: () => changeSource(Source.localStorage),
           ),
-          /*SimpleItem(
+          SimpleItem(
             icon: Icons.upload_sharp,
             text: 'Upload with labels',
             onPress: () => UploadService.uploadWithLabels(),
-          ),*/
+          ),
           /*SimpleItem(
             icon: Icons.delete,
             text: 'Libérer de l\'espace',
