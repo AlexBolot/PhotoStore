@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 08/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -27,11 +27,6 @@ class FirebaseAlbumGrid extends StatefulWidget {
 class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
   String title = 'Firebase';
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<bool> confirmExit() async {
     return await showDialog<bool>(
       context: context,
@@ -43,13 +38,6 @@ class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
     );
   }
 
-  changeFilter(String filter) {
-    var newPage = FirebaseFilteredView(filter: filter, onChangeFilter: (value) => changeFilter(value));
-
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => newPage));
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -57,7 +45,13 @@ class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
-          actions: [FilterActionButton(onSelect: (value) => changeFilter(value))],
+          actions: [
+            FilterActionButton(
+              onSelect: (value) {
+                Navigator.of(context).pushNamed(FirebaseFilteredView.routeName, arguments: {'filter': value});
+              },
+            ),
+          ],
         ),
         body: FutureWidget<List<FirebaseAlbum>>(
           future: FirebaseAlbumService.albums,

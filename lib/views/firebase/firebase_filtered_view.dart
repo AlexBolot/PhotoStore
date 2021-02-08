@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 08/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,32 +20,42 @@ import 'package:photo_store/widgets/firebase/firebase_media_card.dart';
 class FirebaseFilteredView extends StatefulWidget {
   static const String routeName = '/FirebaseFilteredView';
 
-  final ValueChanged<String> onChangeFilter;
   final String filter;
-  final String title;
 
-  const FirebaseFilteredView({this.title, this.filter, this.onChangeFilter});
+  const FirebaseFilteredView({this.filter});
 
   @override
   _FirebaseFilteredViewState createState() => _FirebaseFilteredViewState();
 }
 
 class _FirebaseFilteredViewState extends State<FirebaseFilteredView> {
-  changeFilter(String newFilter) {
-    var newPage = FirebaseFilteredView(filter: newFilter);
-    var newPageRoute = MaterialPageRoute(builder: (_) => newPage);
-    Navigator.of(context).pushReplacement(newPageRoute);
+  Future<List<FirebaseFile>> futureSelection;
+  String filter;
+
+  @override
+  void initState() {
+    setFilter(widget.filter);
+    super.initState();
+  }
+
+  setFilter(String newFilter) {
+    filter = newFilter;
+    futureSelection = FirebaseAlbumService.filter(filter);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flitre : ${widget.filter}'),
-        actions: [FilterActionButton(onSelect: (value) => widget.onChangeFilter(value))],
+        title: Text('Filtre : $filter'),
+        actions: [
+          FilterActionButton(
+            onSelect: (value) => setFilter(value),
+          ),
+        ],
       ),
       body: FutureWidget<List<FirebaseFile>>(
-        future: FirebaseAlbumService.filter(widget.filter),
+        future: futureSelection,
         builder: (files) {
           return GridView.count(
             crossAxisCount: 2,
