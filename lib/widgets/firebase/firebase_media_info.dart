@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/6/21 12:44 AM
+ . Last modified : 10/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -95,8 +95,7 @@ class _FirebaseMediaInfoState extends State<FirebaseMediaInfo> {
     List<String> getSuggestions(String pattern) {
       List<String> result = [];
 
-      var globalLabels = FirebaseLabelService.getGlobalLabels();
-      print(globalLabels);
+      var globalLabels = FirebaseLabelService.globalLabels;
 
       result.addAll(globalLabels.where((label) => label.contains(pattern)));
       result.removeWhere((label) => currentLabels.contains(label));

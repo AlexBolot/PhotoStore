@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 09/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -23,7 +23,7 @@ class Source {
   static const String localStorage = 'local';
   static const String firebaseStorage = 'firebase';
 
-  static String _currentSource;
+  static String _currentSource = firebaseStorage;
 
   static String get currentSource => _currentSource;
 

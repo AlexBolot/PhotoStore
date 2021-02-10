@@ -5,10 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 09/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 extension Count<E> on Iterable<E> {
   int count(bool test(E element)) => this.where(test).length;
@@ -57,5 +59,16 @@ extension ListExtension<T> on List<T> {
     List<T> result = [];
     forEach((item) => result.addIfAsync(item, test));
     return result;
+  }
+}
+
+extension Exists on DocumentReference {
+  Future<bool> get exists async => (await this.get()).exists;
+
+  Future upsert(Map<String, dynamic> data) async {
+    if (await this.exists)
+      this.update(data);
+    else
+      this.set(data);
   }
 }

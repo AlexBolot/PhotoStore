@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 09/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -81,11 +81,11 @@ class FirebaseFileService {
     DocumentReference document = _getDocument(savePath);
 
     if (reset) {
-      await document.update({_lastAccessField: null});
+      await document.upsert({_lastAccessField: null});
       logUpdate('reset $_lastAccessField for ${savePath.fileName}');
     } else {
       var newDate = DateTime.now();
-      await document.update({_lastAccessField: newDate});
+      await document.upsert({_lastAccessField: newDate});
       logUpdate('saved $_lastAccessField ${newDate.toEuropeanFormat()} for ${savePath.fileName}');
     }
   }

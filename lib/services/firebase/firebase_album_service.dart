@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 07/02/2021
+ . Last modified : 09/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -37,7 +37,7 @@ class FirebaseAlbumService {
   static Future<List<FirebaseAlbum>> fetchAllAlbums() async {
     var albumsMap = await _getAlbumsMap();
 
-    logFetch('Loaded ${albumsMap.length} albums from Firebase :: ${albumsMap.values.join(', ')}');
+    logFetch('Loaded ${albumsMap.length} albums from Firebase :: ${albumsMap.keys.join(', ')}');
     return albumsMap.keys.map((key) => FirebaseAlbum(key, albumsMap[key])).toList();
   }
 
@@ -47,7 +47,7 @@ class FirebaseAlbumService {
     albumsMap.putIfAbsent(savePath.directory, () => []);
     albumsMap[savePath.directory].add(savePath.fileName);
 
-    _getAlbumsDocument().update(albumsMap);
+    _getAlbumsDocument().upsert(albumsMap);
 
     logUpdate('Saved new file in ${savePath.directory} :: ${savePath.fileName}');
   }

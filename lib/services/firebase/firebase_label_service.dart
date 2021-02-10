@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 10/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,6 +20,10 @@ class FirebaseLabelService {
   static String _labelsField = 'labels';
   static Map<String, int> _globalLabels;
 
+  static List<String> get globalLabels {
+    return _globalLabels.keys.toList()..sort();
+  }
+
   /// Fetches the labels for a single file
   static Future<List<String>> getFileLabels(SavePath savePath) async {
     DocumentReference document = _getDocument(savePath);
@@ -33,7 +37,7 @@ class FirebaseLabelService {
   /// Saves the labels for a single file
   static Future<void> saveFileLabels(SavePath savePath, List<String> labels) async {
     DocumentReference document = _getDocument(savePath);
-    document.update({_labelsField: labels});
+    document.upsert({_labelsField: labels});
   }
 
   /// Fetches the global list of labels
@@ -41,7 +45,7 @@ class FirebaseLabelService {
     DocumentReference document = _getGlobalLabelsDocument();
     var content = (await document.get()).data();
     _globalLabels = Map<String, int>.from(content);
-    logFetch('fetching all labels : $_globalLabels');
+    logFetch('fetched all labels : $_globalLabels');
   }
 
   static List<String> getGlobalLabels() {
