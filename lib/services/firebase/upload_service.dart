@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,19 +13,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_store/extensions.dart';
-import 'package:photo_store/global.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
+import 'package:photo_store/utils/firebase_accessors.dart';
+import 'package:photo_store/utils/global.dart';
 
 class UploadService {
-  static FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static FirebaseStorage _storage = FirebaseStorage.instance;
-
   static String get _userName => AccountService.currentAccount.name;
 
   /// Saves a file in 2 steps
@@ -37,8 +34,8 @@ class UploadService {
     logStep('Saving file ${savePath.formatted}');
 
     try {
-      await _uploadFile(savePath, file);
-      await _uploadMetaData(savePath, labels);
+      await _uploadFile(savePath.fileName, file);
+      await _uploadMetaData(savePath.fileName, labels);
       FirebaseAlbumService.addToAlbum(savePath);
       return AttemptResult.success;
     } on Exception catch (e) {
@@ -67,6 +64,8 @@ class UploadService {
         logDebug('------ $dirName ------');
 
         for (var item in directory.listSync()) {
+          if (count > 10) continue;
+
           var imageName = item.path.split('/').last;
 
           if (item is File && _isImage(imageName)) {
@@ -91,17 +90,17 @@ class UploadService {
 
   // ------------------ Private methods ------------------ //
 
-  static Future<void> _uploadFile(SavePath savePath, File file) async {
-    var fileReference = _storage.ref(_userName).child(savePath.fileName);
+  static Future<void> _uploadFile(String fileName, File file) async {
+    var fileReference = getFileReference(fileName);
     var uploadTask = fileReference.putFile(file);
 
-    await uploadTask.whenComplete(() => logInfo('File Uploaded to ${fileReference.fullPath}'));
+    await uploadTask.whenComplete(() => logInfo('File Uploaded to $_userName/$fileName'));
   }
 
-  static Future<void> _uploadMetaData(SavePath savePath, List<String> labels) async {
-    DocumentReference document = _firestore.collection(_userName).doc(savePath.fileName);
+  static Future<void> _uploadMetaData(String fileName, List<String> labels) async {
+    DocumentReference document = await getFileDocument(fileName);
 
-    await document.set({'labels': labels});
+    await document.update({FirebaseFields.labels: labels});
     logDebug('Saved labels ${labels.join(' ')}');
   }
 

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 10/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -15,11 +15,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
 import 'package:logging/logging.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/global.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/cache_service.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/global.dart';
 import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
 

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 09/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -30,9 +30,12 @@ extension EuropeanFormat on DateTime {
 }
 
 extension MapExtension<A, B> on Map<A, B> {
+  /// Returns [orDefault] if the Map doesn't contain [key] or if the value is null
   B get(A key, {B orDefault}) {
-    return this.containsKey(key) ? this[key] : orDefault;
+    return this.containsKey(key) ? this[key] ?? orDefault : orDefault;
   }
+
+  B add(A key, B value) => this.putIfAbsent(key, () => value);
 }
 
 extension ListExtension<T> on List<T> {
@@ -60,15 +63,21 @@ extension ListExtension<T> on List<T> {
     forEach((item) => result.addIfAsync(item, test));
     return result;
   }
+
+  Future<T> firstWhereAsync(bool test(T element), {Future<T> orElse()}) async {
+    var first = this.firstWhere(test, orElse: () => null);
+    return first ?? await orElse();
+  }
 }
 
 extension Exists on DocumentReference {
   Future<bool> get exists async => (await this.get()).exists;
 
-  Future upsert(Map<String, dynamic> data) async {
-    if (await this.exists)
-      this.update(data);
-    else
-      this.set(data);
-  }
+  Future<bool> get notExists async => !await this.exists;
+
+  Future createEmpty() async => await this.set({});
+
+  Future<dynamic> getData([String field, dynamic orDefault]) async => (await getMap()).get(field, orDefault: orDefault);
+
+  Future<Map<String, dynamic>> getMap() async => (await this.get()).data();
 }

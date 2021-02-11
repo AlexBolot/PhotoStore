@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,29 +14,52 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
-import 'package:photo_store/global.dart';
 import 'package:photo_store/model/firebase_album.dart';
+import 'package:photo_store/utils/global.dart';
 import 'package:photo_store/views/firebase/firebase_album_view.dart';
 
-class FirebaseAlbumCard extends StatelessWidget {
+class FirebaseAlbumCard extends StatefulWidget {
   final FirebaseAlbum album;
+  final ValueChanged onSelected;
 
-  FirebaseAlbumCard(this.album);
+  FirebaseAlbumCard(this.album, {this.onSelected});
+
+  @override
+  _FirebaseAlbumCardState createState() => _FirebaseAlbumCardState();
+}
+
+class _FirebaseAlbumCardState extends State<FirebaseAlbumCard> {
+  Offset tapPosition;
+  bool selected = false;
 
   @override
   Widget build(BuildContext context) {
     return FutureWidget<File>(
-      future: album.thumbnail,
+      future: widget.album.thumbnail,
       builder: (thumbnail) {
         return InkWell(
           onTap: () => press(() {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => FirebaseAlbumView(album),
+                builder: (_) => FirebaseAlbumView(widget.album),
               ),
             );
           }),
+          /*onLongPress: () {
+            setState(() => selected = true);
+            showMenu(
+              context: context,
+              position: RelativeRect.fromLTRB(tapPosition.dx, tapPosition.dy, 100000, 0.0),
+              items: [
+                PopupMenuItem(child: Text('hello')),
+                PopupMenuItem(child: Text('world')),
+              ],
+            ).then((value) {
+              setState(() => selected = false);
+            });
+          },
+          onTapDown: (details) => tapPosition = details.globalPosition,*/
           child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -54,11 +77,11 @@ class FirebaseAlbumCard extends StatelessWidget {
                   color: Colors.black87,
                   width: double.maxFinite,
                   child: FutureWidget<int>(
-                    future: album.count,
+                    future: widget.album.count,
                     initialData: -1,
                     builder: (count) {
                       return Text(
-                        "${album.name} ($count)",
+                        "${widget.album.name} ($count)",
                         style: TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       );

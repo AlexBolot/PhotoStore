@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 10/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,9 +13,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
+import 'package:photo_store/utils/extensions.dart';
 
 class FirebaseMediaInfo extends StatefulWidget {
   final FirebaseFile firebaseFile;

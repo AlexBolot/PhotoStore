@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 07/02/2021
+ . Last modified : 11/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -14,12 +14,12 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/firebase/firebase_file_service.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
 
 class FirebaseFile {
   Reference reference;
@@ -36,19 +36,19 @@ class FirebaseFile {
 
   // ------------------ Methods and getters ------------------ //
 
-  Future<File> get file async => await FirebaseFileService.getFile(reference, savePath);
+  Future<File> get file async => await FirebaseFileService.getFile(reference, name);
 
-  Future<List<String>> get labels async => _labels ??= await FirebaseLabelService.getFileLabels(savePath);
+  Future<List<String>> get labels async => _labels ??= await FirebaseLabelService.getFileLabels(name);
 
   SavePath get savePath => SavePath(reference.parent.name, name);
 
   void addLabel(String label) {
-    FirebaseLabelService.saveFileLabels(savePath, _labels..addNew(label));
+    FirebaseLabelService.saveFileLabels(name, _labels..addNew(label));
     FirebaseLabelService.addGlobalLabel(label);
   }
 
   void removeLabel(String label) {
-    FirebaseLabelService.saveFileLabels(savePath, _labels..remove(label));
+    FirebaseLabelService.saveFileLabels(name, _labels..remove(label));
     FirebaseLabelService.deleteGlobalLabel(label);
   }
 

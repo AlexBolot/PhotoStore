@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,11 +13,11 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/services/firebase/firebase_file_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
 
 class CacheService {
   static String _localAppDirectory;
@@ -29,11 +29,12 @@ class CacheService {
 
     for (var album in albums) {
       for (var firebaseFile in album.firebaseFiles) {
-        var lastAccess = await FirebaseFileService.getLastAccess(firebaseFile.savePath);
+        var lastAccess = await FirebaseFileService.getLastAccess(firebaseFile.name);
         var chosenDate = DateTime.now().subtract(delay);
 
         if (lastAccess != null && lastAccess.isBefore(chosenDate)) {
-          results.add(await deleteLocalCopy(firebaseFile.savePath));
+          var path = SavePath(firebaseFile.albumName, firebaseFile.name);
+          results.add(await deleteLocalCopy(path));
         }
       }
     }
@@ -53,7 +54,7 @@ class CacheService {
 
     if (file.existsSync()) {
       file.deleteSync();
-      FirebaseFileService.saveLastAccess(savePath, reset: true);
+      FirebaseFileService.saveLastAccess(savePath.fileName, reset: true);
       return AttemptResult.success;
     }
 

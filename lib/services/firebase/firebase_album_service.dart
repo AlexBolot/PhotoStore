@@ -5,24 +5,20 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 09/02/2021
+ . Last modified : 11/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/model/save_path.dart';
-import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
+import 'package:photo_store/utils/firebase_accessors.dart';
 
 class FirebaseAlbumService {
   static List<FirebaseAlbum> _albums;
-  static FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  static String get _userName => AccountService.currentAccount.name;
 
   /// Returns the in-memory albums or loads from firestore if null
   static Future<List<FirebaseAlbum>> get albums async => _albums ??= await fetchAllAlbums();
@@ -35,34 +31,45 @@ class FirebaseAlbumService {
 
   /// Load the list of all albums and files from firestore
   static Future<List<FirebaseAlbum>> fetchAllAlbums() async {
-    var albumsMap = await _getAlbumsMap();
+    var document = await getAlbumsDocument();
+    List<dynamic> albumsList = await document.getData(FirebaseFields.albums, []);
 
-    logFetch('Loaded ${albumsMap.length} albums from Firebase :: ${albumsMap.keys.join(', ')}');
-    return albumsMap.keys.map((key) => FirebaseAlbum(key, albumsMap[key])).toList();
+    var albums = albumsList.map((data) => FirebaseAlbum.fromMap(data)).toList();
+    var albumNames = albums.map((album) => album.name).join((', '));
+
+    logFetch('Loaded ${albums.length} albums from Firebase :: $albumNames');
+    return albums;
   }
 
   /// Adds a firebaseFile to a remote firestore album
   static Future<void> addToAlbum(SavePath savePath) async {
-    var albumsMap = await _getAlbumsMap();
-    albumsMap.putIfAbsent(savePath.directory, () => []);
-    albumsMap[savePath.directory].add(savePath.fileName);
+    var albumName = savePath.directory;
+    var fileName = savePath.fileName;
 
-    _getAlbumsDocument().upsert(albumsMap);
+    bool sameName(FirebaseAlbum album) => album.name == albumName;
+    Map albumToJson(FirebaseAlbum album) => album.toMap();
 
-    logUpdate('Saved new file in ${savePath.directory} :: ${savePath.fileName}');
+    if (_albums.contains(albumName)) {
+      _albums.firstWhere(sameName).addFile(fileName);
+    } else {
+      _albums.add(await createAlbum(albumName)
+        ..addFile(fileName));
+    }
+
+    var document = await getAlbumsDocument();
+    await document.update({FirebaseFields.albums: _albums.map(albumToJson).toList()});
+
+    logUpdate('Saved new file in $albumName :: $fileName');
   }
 
-  // ------------------ Private methods ------------------ //
+  static Future<FirebaseAlbum> createAlbum(String albumName) async {
+    var document = await getAlbumsDocument();
+    var lastIndex = await document.getData(FirebaseFields.lastAlbumIndex, 0);
 
-  static DocumentReference _getAlbumsDocument() => _firestore.collection('Autre').doc('Albums_$_userName');
+    var newIndex = lastIndex + 1;
 
-  static Future<Map<String, List<String>>> _getAlbumsMap() async {
-    DocumentReference document = _getAlbumsDocument();
-    Map<String, dynamic> content = (await document.get()).data();
+    await document.update({FirebaseFields.lastAlbumIndex: newIndex});
 
-    Map<String, List<String>> result = {};
-    content.forEach((key, value) => result.putIfAbsent(key, () => value.cast<String>()));
-
-    return result;
+    return FirebaseAlbum(albumName, newIndex, []);
   }
 }
