@@ -44,9 +44,9 @@ class UploadService {
     }
   }
 
+  /// ⚠️ deprecated
   /// Use this only to send all images from phone to firebase.
   /// This is not a normal use-case (only during development)
-  @deprecated
   static Future<void> uploadWithLabels() async {
     Directory appDocumentsDirectory = await getExternalStorageDirectory();
     var directories = appDocumentsDirectory.listSync();
