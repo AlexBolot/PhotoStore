@@ -5,99 +5,79 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/4/21 4:35 PM
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_store/extensions.dart';
-import 'package:photo_store/model/save_path.dart';
-import 'package:photo_store/services/account_service.dart';
-import 'package:photo_store/services/firebase/download_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
+import 'package:photo_store/utils/firebase_accessors.dart';
 
 class FirebaseFileService {
-  static String _localAppDirectory;
-  static String _lastAccessField = 'last_access';
-  static String _labelsField = 'labels';
+  static Future<String> get _localAppDirectory async => (await getApplicationDocumentsDirectory()).path;
 
-  static Future<File> getFile(Reference reference, SavePath savePath) async {
-    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
+  // ------------------ Get/Save File ------------------ //
 
-    var localFile = File(_localAppDirectory + '/' + savePath.formatted);
-    updateLastAccess(savePath);
+  static Future<File> getFile(Reference reference, String fileName) async {
+    var localFile = File(await _localAppDirectory + '/' + fileName);
+    saveLastAccess(fileName);
 
     if (localFile.existsSync()) {
       return localFile;
     } else {
       var downloadUrl = await reference.getDownloadURL();
-      return await DownloadService.downloadFile(downloadUrl, savePath);
+      return await downloadFile(downloadUrl, fileName);
     }
   }
 
-  static Future<File> saveFile(List<int> bytes, SavePath savePath) async {
-    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
-    var directory = Directory(_localAppDirectory + '/' + savePath.directory);
+  static Future<File> downloadFile(String url, String fileName) async {
+    HttpClientRequest request = await HttpClient().getUrl(Uri.parse(url));
+    HttpClientResponse response = await request.close();
+    Uint8List bytes = await consolidateHttpClientResponseBytes(response);
+    logDownload('downloaded file $fileName');
+
+    return saveFile(bytes, fileName);
+  }
+
+  static Future<File> saveFile(List<int> bytes, String fileName) async {
+    var directory = Directory(await _localAppDirectory);
 
     if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
 
-    var file = File(directory.path + '/' + savePath.fileName);
+    var path = directory.path + '/' + fileName;
 
-    file.writeAsBytesSync(bytes);
-
-    return file;
+    return File(path)..writeAsBytesSync(bytes);
   }
 
-  /// May return null
-  static Future<DateTime> getLastAccess(SavePath savePath) async {
-    DocumentReference document = _getDocument(savePath);
-    var content = (await document.get()).data();
+  // ------------------ Get/Save Last Access ------------------ //
 
-    // Returns a Timestamp.toDate or null
-    return content.get(_lastAccessField)?.toDate();
+  /// Returns a Timestamp.toDate or null
+  static Future<DateTime> getLastAccess(String fileName) async {
+    var document = await getFileDocument(fileName);
+    var lastAccess = await document.getData(FirebaseFields.lastAccess);
+    return lastAccess?.toDate();
   }
 
-  static Future<List<String>> getLabels(SavePath savePath) async {
-    DocumentReference document = _getDocument(savePath);
-    var content = (await document.get()).data();
-    var labels = content.get(_labelsField, orDefault: []).cast<String>();
-    logFetch('fetching labels : $labels');
-
-    return labels;
-  }
-
-  static Future<void> setLabels(SavePath savePath, List<String> labels) async {
-    DocumentReference document = _getDocument(savePath);
-    document.update({_labelsField: labels});
-  }
-
-  static Future<void> updateLastAccess(SavePath savePath, {bool reset = false}) async {
-    DocumentReference document = _getDocument(savePath);
+  static Future<void> saveLastAccess(String fileName, {bool reset = false}) async {
+    DocumentReference document = await getFileDocument(fileName);
 
     if (reset) {
-      await document.update({_lastAccessField: null});
-      logUpdate('reset $_lastAccessField for ${savePath.fileName}');
+      await document.update({FirebaseFields.lastAccess: null});
+      logUpdate('reset ${FirebaseFields.lastAccess} for $fileName');
     } else {
       var newDate = DateTime.now();
-      await document.update({_lastAccessField: newDate});
-      logUpdate('saved $_lastAccessField ${newDate.toEuropeanFormat()} for ${savePath.fileName}');
+      await document.update({FirebaseFields.lastAccess: newDate});
+      logUpdate('saved ${FirebaseFields.lastAccess} ${newDate.toEuropeanFormat()} for $fileName');
     }
-  }
-
-  // ------------------ Private methods ------------------ //
-
-  static DocumentReference _getDocument(SavePath savePath) {
-    var firestore = FirebaseFirestore.instance;
-    var collectionName = '${AccountService.currentAccount.name}_${savePath.directory}';
-    var collection = firestore.collection(collectionName);
-
-    return collection.doc(savePath.fileName);
   }
 }

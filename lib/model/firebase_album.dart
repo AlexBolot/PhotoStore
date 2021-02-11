@@ -5,62 +5,64 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_file.dart';
-import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
 
 class FirebaseAlbum {
   String name;
-  Reference reference;
+  int index;
+  List<FirebaseFile> firebaseFiles;
 
-  List<FirebaseFile> _firebaseFiles;
+  FirebaseAlbum(this.name, this.index, List<String> fileNames) {
+    this.firebaseFiles = fileNames.map((fileName) => FirebaseFile(fileName, name)).toList();
+  }
 
-  FirebaseAlbum(Reference ref) {
-    this.reference = ref;
-    this.name = ref.name;
+  FirebaseAlbum.fromMap(Map data) {
+    this.name = data['name'];
+    this.index = data['index'];
+
+    List<String> fileNames = data['file_names'].cast<String>();
+    this.firebaseFiles = fileNames.map((name) => FirebaseFile(name, this.name)).toList();
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': this.name,
+      'index': this.index,
+      'file_names': this.firebaseFiles.map((firebaseFile) => firebaseFile.name).toList(),
+    };
   }
 
   // ------------------ Getters ------------------ //
 
-  Future<int> get count async => (await firebaseFiles).length;
+  Future<int> get count async => firebaseFiles.length;
 
-  Future<List<FirebaseFile>> get firebaseFiles async => _firebaseFiles ??= await _loadFiles();
+  Future<File> get thumbnail async => await firebaseFiles.first.file;
 
-  Future<File> get thumbnail async => await _loadThumbnail();
+  List<String> get fileNames => firebaseFiles.map((x) => x.name);
+
+  // ------------------ Methods ------------------ //
 
   Future<List<FirebaseFile>> filter(String label) async {
-    List<FirebaseFile> result = [];
-
-    var firebaseFiles = await this.firebaseFiles;
-
-    for (var firebaseFile in firebaseFiles) {
-      if (await firebaseFile.hasLabel(label)) {
-        result.add(firebaseFile);
-      }
-    }
-
-    return result;
+    return firebaseFiles.whereAsync((x) async => await x.hasLabel(label));
   }
 
-  // ------------------ Private methods ------------------ //
+  void addFile(String fileName) => this.firebaseFiles.add(FirebaseFile(fileName, name));
 
-  Future<List<FirebaseFile>> _loadFiles() async {
-    ListResult list = await reference.listAll();
-    var files = list.toFirebaseFile();
-    logFetch("found ${files.length} files for album '$name'");
-    return files;
+  @override
+  bool operator ==(Object other) {
+    if (other is FirebaseAlbum) return name == other.name;
+    if (other is String) return name == other;
+    return false;
   }
 
-  Future<File> _loadThumbnail() async {
-    var firstFirebaseFile = (await firebaseFiles).first;
-    return await firstFirebaseFile.file;
-  }
+  @override
+  int get hashCode => name.hashCode;
 }

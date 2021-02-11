@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 09/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,7 +20,7 @@ class FilterActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalLabels = FirebaseLabelService.getGlobalLabels();
+    var globalLabels = FirebaseLabelService.globalLabels;
     return IconButton(
       icon: Icon(Icons.filter_alt),
       onPressed: () {

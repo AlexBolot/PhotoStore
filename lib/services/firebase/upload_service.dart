@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/28/21 3:20 PM
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,25 +13,30 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_store/model/save_path.dart';
 import 'package:photo_store/services/account_service.dart';
-import 'package:photo_store/services/classification_service.dart';
+import 'package:photo_store/services/firebase/firebase_album_service.dart';
 import 'package:photo_store/services/logging_service.dart';
+import 'package:photo_store/utils/extensions.dart';
+import 'package:photo_store/utils/firebase_accessors.dart';
+import 'package:photo_store/utils/global.dart';
 
 class UploadService {
+  static String get _userName => AccountService.currentAccount.name;
+
   /// Saves a file in 2 steps
   ///
   /// 1. Uploading the file to Storage
   /// 2. Uploading the labels and download URL to Firestore
   ///
-  static Future<AttemptResult> saveFile(File image, SavePath savePath, [List<String> labels = const []]) async {
+  static Future<AttemptResult> uploadFile(File file, SavePath savePath, [List<String> labels = const []]) async {
     logStep('Saving file ${savePath.formatted}');
 
     try {
-      String downloadUrl = await _uploadFile(savePath, image);
-      await _uploadMetaData(savePath, downloadUrl, labels);
+      await _uploadFile(savePath.fileName, file);
+      await _uploadMetaData(savePath.fileName, labels);
+      FirebaseAlbumService.addToAlbum(savePath);
       return AttemptResult.success;
     } on Exception catch (e) {
       logWarning(e);
@@ -39,79 +44,68 @@ class UploadService {
     }
   }
 
+  /// ⚠️ deprecated
+  /// Use this only to send all images from phone to firebase.
+  /// This is not a normal use-case (only during development)
   static Future<void> uploadWithLabels() async {
     Directory appDocumentsDirectory = await getExternalStorageDirectory();
     var directories = appDocumentsDirectory.listSync();
 
     logDebug('loading files from : ${appDocumentsDirectory.path}');
 
-    directories.take(5).forEach((dir) async {
-      if (dir is Directory) {
-        int count = 0;
+    List<AttemptResult> results = [];
 
-        logDebug('------ ${dir.path.split('/').last} ------');
-        var dirName = dir.path.split('/').last;
+    for (var directory in directories) {
+      if (directory is Directory) {
+        var dirName = directory.path.split('/').last;
+        var start = getTime();
+        var count = 0;
 
-        for (var item in dir.listSync()) {
-          if (count > 10) return;
+        logDebug('------ $dirName ------');
 
-          if (item is File) {
-            var fileExtension = item.path.split('.').last.toLowerCase();
-            bool isImage = ['jpg', 'png', 'jpeg'].contains(fileExtension);
+        for (var item in directory.listSync()) {
+          if (count > 10) continue;
 
-            if (isImage) {
-              logDebug('-- ${item.path.split('/').last}');
-              var imageName = item.path.split('/').last;
+          var imageName = item.path.split('/').last;
 
-              var labels = await ClassificationService.labelFile(item);
-              UploadService.saveFile(item, SavePath(dirName, imageName), labels);
-              count++;
-            }
+          if (item is File && _isImage(imageName)) {
+            logDebug('-- $imageName');
+
+            var result = await uploadFile(item, SavePath(dirName, imageName));
+            results.add(result);
+            count++;
           }
         }
+
+        logDelay('Uploaded $count images for /$dirName', start, getTime());
       }
-    });
+    }
+
+    // Checking if every result is successful
+    var finalResult = AttemptResult(results.every((result) => result.value));
+    var successes = results.count((result) => result.value);
+
+    logResult('Uploading $successes/${results.length} files', finalResult);
   }
 
   // ------------------ Private methods ------------------ //
 
-  /// Uploads a [file] to the Storage and returns its download URL
-  ///
-  static Future<String> _uploadFile(SavePath savePath, File file) async {
-    Reference storageFolder = _getStorageFolder(savePath);
-
-    var fileReference = storageFolder.child(savePath.fileName);
+  static Future<void> _uploadFile(String fileName, File file) async {
+    var fileReference = getFileReference(fileName);
     var uploadTask = fileReference.putFile(file);
 
-    await uploadTask.whenComplete(() => logInfo('File Uploaded to ${fileReference.fullPath}'));
-    return await fileReference.getDownloadURL();
+    await uploadTask.whenComplete(() => logInfo('File Uploaded to $_userName/$fileName'));
   }
 
-  /// Uploads the labels and downloadURL of a [futureFile] to the Firestore
-  ///
-  static Future<void> _uploadMetaData(SavePath savePath, String url, List<String> labels) async {
-    DocumentReference document = _getDocument(savePath);
+  static Future<void> _uploadMetaData(String fileName, List<String> labels) async {
+    DocumentReference document = await getFileDocument(fileName);
 
-    await document.set({'downloadUrl': url});
-    logDebug('Saved downloadUrl');
-    await document.update({'labels': labels});
+    await document.update({FirebaseFields.labels: labels});
     logDebug('Saved labels ${labels.join(' ')}');
   }
 
-  /// Return a Firestore Document based on the active user and the given path
-  ///
-  static DocumentReference _getDocument(SavePath savePath) {
-    var firestore = FirebaseFirestore.instance;
-    var collectionName = '${AccountService.currentAccount.name}_${savePath.directory}';
-    var collection = firestore.collection(collectionName);
-
-    return collection.doc(savePath.fileName);
-  }
-
-  /// Return a Storage reference (folder) based on the active user and the given directory path
-  ///
-  static Reference _getStorageFolder(SavePath savePath) {
-    var storage = FirebaseStorage.instance.ref(AccountService.currentAccount.name);
-    return storage.child(savePath.directory);
+  static bool _isImage(String fileName) {
+    var fileExtension = fileName.split('.').last.toLowerCase();
+    return ['jpg', 'png', 'jpeg'].contains(fileExtension);
   }
 }

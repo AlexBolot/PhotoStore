@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/6/21 12:44 AM
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,9 +13,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:photo_store/extensions.dart';
 import 'package:photo_store/model/firebase_file.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
+import 'package:photo_store/utils/extensions.dart';
 
 class FirebaseMediaInfo extends StatefulWidget {
   final FirebaseFile firebaseFile;
@@ -95,8 +95,7 @@ class _FirebaseMediaInfoState extends State<FirebaseMediaInfo> {
     List<String> getSuggestions(String pattern) {
       List<String> result = [];
 
-      var globalLabels = FirebaseLabelService.getGlobalLabels();
-      print(globalLabels);
+      var globalLabels = FirebaseLabelService.globalLabels;
 
       result.addAll(globalLabels.where((label) => label.contains(pattern)));
       result.removeWhere((label) => currentLabels.contains(label));

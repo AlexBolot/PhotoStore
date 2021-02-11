@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 2/3/21 7:17 PM
+ . Last modified : 07/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -26,14 +26,16 @@ logStep(message) => logger.info('ℹ️ $message');
 
 // ----- Specialized loggers ------ //
 
+/// Sending a file to firestore
 logUpload(message) => logDebug('↗️ $message');
 
+/// Downloading a file from firestore
 logDownload(message) => logDebug('↘️️ $message');
 
-// When only getting metadata from firebase (not a file)
+/// Getting metadata from firebase (not a file)
 logFetch(message) => logDebug('🔎 $message');
 
-// When only sending metatada to firebase (not a file)
+/// Sending metatada to firebase (not a file)
 logUpdate(message) => logDebug('💾 $message');
 
 logResult(String attemptName, AttemptResult result) {

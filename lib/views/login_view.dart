@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -13,10 +13,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
-import 'package:photo_store/global.dart';
 import 'package:photo_store/services/account_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/services/preference_service.dart';
+import 'package:photo_store/utils/global.dart';
 
 class LoginView extends StatefulWidget {
   /// Use this for easier access from Named-Routes navigation

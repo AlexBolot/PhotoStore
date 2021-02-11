@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 11/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,9 +16,10 @@ import 'package:flutter_stash/flutter_stash.dart';
 import 'package:logging/logging.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_store/services/account_service.dart';
+import 'package:photo_store/services/cache_service.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
 import 'package:photo_store/services/logging_service.dart';
-import 'package:photo_store/services/preference_service.dart';
+import 'package:photo_store/utils/global.dart';
 import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
 
@@ -59,10 +60,39 @@ buildSplashScreen(String title) {
     title: title,
     nextRouteName: PhotoGridView.routeName,
     loadFunctions: [
-      () async => await PhotoManager.requestPermission(),
-      () async => await AccountService.loginToFirebase().then((result) => logResult('Firebase login', result)),
-      () async => await FirebaseLabelService.fetchAllLabels(),
-      () async => await Source.init(),
+      () async {
+        // -------------------- //
+        await waitOnTask(
+          taskName: 'Requesting user permissions',
+          task: PhotoManager.requestPermission(),
+        );
+        // -------------------- //
+        await waitOnTask(
+          taskName: 'Login to Firebase',
+          task: AccountService.loginToFirebase().then((result) => logResult('Firebase login', result)),
+        );
+        // -------------------- //
+        await waitOnTask(
+          taskName: 'Fetching all labels',
+          task: FirebaseLabelService.fetchAllLabels(),
+        );
+        // -------------------- //
+        backgroundTask(
+          taskName: 'Free space on device',
+          task: CacheService.freeSpaceOnDevice(),
+        );
+      },
     ],
   );
+}
+
+Future waitOnTask({String taskName, Future task}) async {
+  var start = getTime();
+  await task;
+  logDelay(taskName, start, getTime());
+}
+
+void backgroundTask({String taskName, Future task}) {
+  var start = getTime();
+  task.then((value) => logDelay(taskName, start, getTime()));
 }
