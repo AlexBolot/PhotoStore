@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 12/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,7 +20,7 @@ import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/utils/extensions.dart';
 
 class CacheService {
-  static String _localAppDirectory;
+  static Future<String> get _localAppDirectory async => (await getApplicationDocumentsDirectory()).path;
 
   static Future<void> freeSpaceOnDevice([Duration delay = const Duration(days: 30)]) async {
     var albums = await FirebaseAlbumService.fetchAllAlbums();
@@ -37,6 +37,7 @@ class CacheService {
           results.add(await deleteLocalCopy(path));
         }
       }
+      album.refresh();
     }
 
     // Checking if every result is successful
@@ -48,9 +49,7 @@ class CacheService {
   }
 
   static Future<AttemptResult> deleteLocalCopy(SavePath savePath) async {
-    _localAppDirectory ??= (await getApplicationDocumentsDirectory()).path;
-
-    var file = File(_localAppDirectory + '/' + savePath.formatted);
+    var file = File(await _localAppDirectory + '/' + savePath.fileName);
 
     if (file.existsSync()) {
       file.deleteSync();
@@ -58,6 +57,7 @@ class CacheService {
       return AttemptResult.success;
     }
 
+    logWarning('Failed to delete ${file.path}');
     return AttemptResult.fail;
   }
 }

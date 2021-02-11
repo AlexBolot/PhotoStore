@@ -22,7 +22,7 @@ Find official documentation [here](https://developer.android.com/studio/projects
 ```
 minSdkVersion : 23 (Android 6)
 targetSdkVersion : 29 (Android 10)
-NDK version : 21.3.6528147
+NDK version : 22.0.7026061
 ```
 This is setup in [android/app/build.gradle](https://github.com/AlexBolot/PhotoStore/blob/master/android/app/build.gradle)
 
