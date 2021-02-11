@@ -29,9 +29,15 @@ This is setup in [android/app/build.gradle](https://github.com/AlexBolot/PhotoSt
 ## 3. Tools
 
 ### IDE
+
 There are various available IDEs for Flutter development
 
 The list is available [here](https://flutter.dev/docs/get-started/editor)
 
-### Plugins 
-Add the Flutter/Dart plugin available for your chosen IDE 
+### Plugins
+
+Add the Flutter/Dart plugin available for your chosen IDE
+
+<img src="assets/video-startup.gif" alt="n">
+
+![Hello](assets/video-startup.gif )
