@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 12/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -19,24 +19,25 @@ class FirebaseAlbum {
   String name;
   int index;
   List<FirebaseFile> firebaseFiles;
+  List<String> fileNames;
 
-  FirebaseAlbum(this.name, this.index, List<String> fileNames) {
-    this.firebaseFiles = fileNames.map((fileName) => FirebaseFile(fileName, name)).toList();
+  FirebaseAlbum(this.name, this.index, this.fileNames) {
+    refresh();
   }
 
   FirebaseAlbum.fromMap(Map data) {
     this.name = data['name'];
     this.index = data['index'];
+    this.fileNames = data['file_names'].cast<String>();
 
-    List<String> fileNames = data['file_names'].cast<String>();
-    this.firebaseFiles = fileNames.map((name) => FirebaseFile(name, this.name)).toList();
+    refresh();
   }
 
   Map<String, dynamic> toMap() {
     return {
       'name': this.name,
       'index': this.index,
-      'file_names': this.firebaseFiles.map((firebaseFile) => firebaseFile.name).toList(),
+      'file_names': this.fileNames,
     };
   }
 
@@ -46,13 +47,13 @@ class FirebaseAlbum {
 
   Future<File> get thumbnail async => await firebaseFiles.first.file;
 
-  List<String> get fileNames => firebaseFiles.map((x) => x.name);
-
   // ------------------ Methods ------------------ //
 
   Future<List<FirebaseFile>> filter(String label) async {
     return firebaseFiles.whereAsync((x) async => await x.hasLabel(label));
   }
+
+  void refresh() => this.firebaseFiles = fileNames.map((fileName) => FirebaseFile(fileName, name)).toList();
 
   void addFile(String fileName) => this.firebaseFiles.add(FirebaseFile(fileName, name));
 

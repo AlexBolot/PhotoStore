@@ -28,8 +28,7 @@ class FirebaseFile {
   AssetType type;
   List<String> _labels;
 
-  FirebaseFile(String name, String albumName) {
-    this.name = name;
+  FirebaseFile(this.name, this.albumName) {
     this.type = _findType();
     this.reference = _getFileReference();
   }

@@ -13,6 +13,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photo_store/services/cache_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/utils/global.dart';
@@ -77,14 +78,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
             text: 'Upload with labels',
             onPress: () => UploadService.uploadWithLabels(),
           ),
-          /*SimpleItem(
+          SimpleItem(
             icon: Icons.delete,
             text: 'Libérer de l\'espace',
-            onPress: () {
-              CacheService.freeSpaceOnDevice(Duration());
-              widget.onChange();
-            },
-          ),*/
+            onPress: () => CacheService.freeSpaceOnDevice(Duration()),
+          ),
         ],
       ),
     );

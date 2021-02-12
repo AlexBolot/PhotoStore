@@ -39,7 +39,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    ndkVersion "21.4.7075529"
+    ndkVersion "22.0.7026061"
     compileSdkVersion 29
 
     sourceSets {
