@@ -4,9 +4,9 @@ A Gallery app with cloud backup of your photos
 
 # Preview
 
-|  Application Start  |  b  |
-| --- | --- |
-|<img src="assets/app-startup.gif" height="400" alt="n"> |b |
+|  Application Start  |  Access Album |
+| :---: | :---: |
+| <img src="assets/app-startup.gif" height="400" alt="app-startup.gif"> | <img src="assets/selecting-album.gif" height="400" alt="selecting-album.gif"> |
 
 # Requirements
 
