@@ -38,6 +38,6 @@ The list is available [here](https://flutter.dev/docs/get-started/editor)
 
 Add the Flutter/Dart plugin available for your chosen IDE
 
-<img src="assets/video-startup.gif" height="250" alt="n">
+<img src="assets/video-startup.gif" height="400" alt="n">
 
 ![Hello](assets/video-startup.gif )
