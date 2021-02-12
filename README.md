@@ -2,17 +2,25 @@
 
 A Gallery app with cloud backup of your photos
 
-# Requirements 
+# Preview
+
+|  Application Start  |  b  |
+| --- | --- |
+|<img src="assets/app-startup.gif" height="400" alt="n"> |b |
+
+# Requirements
 
 ## 1. Flutter
+
 You can find the install process of the latest version [here](https://flutter.dev/docs/get-started/install)
 
 Result of `flutter --version` on my machine :
+
 ```
-Flutter 1.26.0-2.0.pre.275 • channel master • https://github.com/flutter/flutter.git
-Framework • revision d9044a8a61 (il y a 2 semaines) • 2021-01-09 04:04:04 -0500
-Engine • revision caf6a8191f
-Tools • Dart 2.12.0 (build 2.12.0-204.0.dev)
+Flutter 1.22.6 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 9b2d32b605 (il y a 3 semaines) • 2021-01-22 14:36:39 -0800
+Engine • revision 2f0af37152
+Tools • Dart 2.10.5
 ```
 ## 2. Android SDK / NDK
 
@@ -37,7 +45,3 @@ The list is available [here](https://flutter.dev/docs/get-started/editor)
 ### Plugins
 
 Add the Flutter/Dart plugin available for your chosen IDE
-
-<img src="assets/video-startup.gif" height="400" alt="n">
-
-![Hello](assets/video-startup.gif )
