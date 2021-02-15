@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stash/flutter_stash.dart';
 import 'package:photo_store/model/local_album.dart';
 import 'package:photo_store/services/local/local_album_service.dart';
-import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/widgets/local/local_album_card.dart';
 
 class LocalAlbumGrid extends StatefulWidget {
@@ -31,7 +30,6 @@ class _LocalAlbumGridState extends State<LocalAlbumGrid> {
 
   @override
   Widget build(BuildContext context) {
-    logWarning('toto');
     return Scaffold(
       body: FutureWidget<List<LocalAlbum>>(
         future: LocalAlbumService.albums,
