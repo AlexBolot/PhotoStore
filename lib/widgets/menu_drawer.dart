@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -58,18 +58,17 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ),
             ),
           ),
-          Title(child: Text('Photo Source'), color: Colors.yellow),
           RadioItem(
             text: 'Firebase',
             value: Source.firebaseStorage,
-            groupValue: Source.currentSource,
+            groupValue: Source.current,
             onChanged: (value) => changeSource(value),
             onTap: () => changeSource(Source.firebaseStorage),
           ),
           RadioItem(
             text: 'Local',
             value: Source.localStorage,
-            groupValue: Source.currentSource,
+            groupValue: Source.current,
             onChanged: (value) => changeSource(value),
             onTap: () => changeSource(Source.localStorage),
           ),

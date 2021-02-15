@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 09/02/2021
+ . Last modified : 13/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -17,46 +17,48 @@ class Preference {
   static const String password = 'password';
   static const String email = 'email';
   static const String source = 'photo-source';
+  static const String dragAndDropBehaviour = 'drag-drop-behaviour';
+}
+
+class DragAndDropBehaviour {
+  static const String swap = 'swap';
+  static const String reorder = 'reorder';
+  static List<String> _values = [swap, reorder];
+
+  static String _current = swap;
+
+  static String get current => _current;
+
+  static Future<void> loadFromPreference() async {
+    _current = await getPreference(Preference.dragAndDropBehaviour, orDefault: _current);
+  }
+
+  static int indexOf(String source) => _values.indexOf(source);
+
+  static String fromIndex(int index) => _values.elementAt(index);
 }
 
 class Source {
   static const String localStorage = 'local';
   static const String firebaseStorage = 'firebase';
+  static List<String> _values = [localStorage, firebaseStorage];
 
-  static String _currentSource = firebaseStorage;
+  static String _current = firebaseStorage;
 
-  static String get currentSource => _currentSource;
+  static String get current => _current;
 
-  static Future init() async {
-    _currentSource = await getPreference(Preference.source, orDefault: Source.firebaseStorage);
+  static Future<void> loadFromPreference() async {
+    _current = await getPreference(Preference.source, orDefault: _current);
   }
 
   static select(String source) {
-    _currentSource = source;
-    setPreference(Preference.source, _currentSource);
+    _current = source;
+    setPreference(Preference.source, _current);
   }
 
-  static int indexOf(String source) {
-    switch (source) {
-      case localStorage:
-        return 0;
-      case firebaseStorage:
-        return 1;
-      default:
-        throw 'No Source matches $source';
-    }
-  }
+  static int indexOf(String source) => _values.indexOf(source);
 
-  static String fromIndex(int index) {
-    switch (index) {
-      case 0:
-        return localStorage;
-      case 1:
-        return firebaseStorage;
-      default:
-        throw 'No Source matches index $index';
-    }
-  }
+  static String fromIndex(int index) => _values.elementAt(index);
 }
 
 /// Global photo source shared through the App (Local or Firebase)

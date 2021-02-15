@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 13/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -18,7 +18,7 @@ import 'package:photo_store/utils/extensions.dart';
 class FirebaseFields {
   static final String lastAccess = 'last_access';
   static final String albums = 'albums';
-  static final String lastAlbumIndex = 'last_album_index';
+  static final String albumsCount = 'albums_count';
   static final String labels = 'labels';
 }
 
