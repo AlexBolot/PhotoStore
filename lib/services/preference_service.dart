@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 13/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -29,6 +29,11 @@ class DragAndDropBehaviour {
 
   static String get current => _current;
 
+  static set current(String source) {
+    _current = source;
+    setPreference(Preference.source, _current);
+  }
+
   static Future<void> loadFromPreference() async {
     _current = await getPreference(Preference.dragAndDropBehaviour, orDefault: _current);
   }
@@ -47,13 +52,13 @@ class Source {
 
   static String get current => _current;
 
-  static Future<void> loadFromPreference() async {
-    _current = await getPreference(Preference.source, orDefault: _current);
-  }
-
-  static select(String source) {
+  static set current(String source) {
     _current = source;
     setPreference(Preference.source, _current);
+  }
+
+  static Future<void> loadFromPreference() async {
+    _current = await getPreference(Preference.source, orDefault: _current);
   }
 
   static int indexOf(String source) => _values.indexOf(source);
