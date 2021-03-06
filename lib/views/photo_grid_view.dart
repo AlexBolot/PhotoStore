@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/02/2021
+ . Last modified : 13/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -30,7 +30,7 @@ class _PhotoGridViewState extends State<PhotoGridView> {
     return Scaffold(
       drawer: MenuDrawer(updateParent: () => setState(() {})),
       body: SwitchWidget(
-        value: Source.currentSource,
+        value: Source.current,
         cases: {
           Source.firebaseStorage: FirebaseAlbumGrid(),
           Source.localStorage: LocalAlbumGrid(),

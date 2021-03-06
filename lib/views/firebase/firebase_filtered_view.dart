@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 08/02/2021
+ . Last modified : 06/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -41,10 +41,17 @@ class _FirebaseFilteredViewState extends State<FirebaseFilteredView> {
   setFilter(String newFilter) {
     filter = newFilter;
     futureSelection = FirebaseAlbumService.filter(filter);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
+    if (filter == null && arguments != null) {
+      setFilter(arguments['filter']);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Filtre : $filter'),

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 06/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -34,10 +34,19 @@ class _MenuDrawerState extends State<MenuDrawer> {
     super.initState();
   }
 
-  changeSource(String value) {
-    Source.select(value);
+  refreshAndParent() {
     widget.updateParent();
     setState(() {});
+  }
+
+  changeSource(String value) {
+    Source.current = value;
+    refreshAndParent();
+  }
+
+  changeDragDropBehaviour(String value) {
+    DragAndDropBehaviour.current = value;
+    refreshAndParent();
   }
 
   @override
@@ -58,20 +67,23 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ),
             ),
           ),
-          Title(child: Text('Photo Source'), color: Colors.yellow),
-          RadioItem(
-            text: 'Firebase',
-            value: Source.firebaseStorage,
-            groupValue: Source.currentSource,
-            onChanged: (value) => changeSource(value),
-            onTap: () => changeSource(Source.firebaseStorage),
+          ToggleItem<String>(
+            isActive: Source.current == Source.firebaseStorage,
+            title: 'Source des photos',
+            activeText: 'Firebase',
+            activeValue: Source.firebaseStorage,
+            inactiveText: 'Local',
+            inactiveValue: Source.localStorage,
+            onChange: (value) => changeSource(value),
           ),
-          RadioItem(
-            text: 'Local',
-            value: Source.localStorage,
-            groupValue: Source.currentSource,
-            onChanged: (value) => changeSource(value),
-            onTap: () => changeSource(Source.localStorage),
+          ToggleItem<String>(
+            isActive: DragAndDropBehaviour.current == DragAndDropBehaviour.reorder,
+            title: 'Drag and Drop',
+            activeText: 'Réordonner',
+            activeValue: DragAndDropBehaviour.reorder,
+            inactiveText: 'Échanger',
+            inactiveValue: DragAndDropBehaviour.swap,
+            onChange: (value) => changeDragDropBehaviour(value),
           ),
           SimpleItem(
             icon: Icons.upload_sharp,
@@ -109,14 +121,24 @@ class SimpleItem extends StatelessWidget {
   }
 }
 
-class ToggleItem extends StatelessWidget {
-  final String text;
+class ToggleItem<T> extends StatelessWidget {
+  final String title;
   final String activeText;
   final String inactiveText;
-  final bool status;
-  final Function(bool) onChange;
+  final T activeValue;
+  final T inactiveValue;
+  final bool isActive;
+  final ValueChanged<T> onChange;
 
-  const ToggleItem({this.text, this.activeText, this.inactiveText, this.status, this.onChange});
+  const ToggleItem({
+    @required this.title,
+    this.activeText,
+    this.inactiveText,
+    this.isActive = false,
+    this.onChange,
+    this.activeValue,
+    this.inactiveValue,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,13 +148,19 @@ class ToggleItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(text, style: TextStyle(fontSize: 18)),
-          Container(
+          Flexible(child: Text(title, style: TextStyle(fontSize: 18))),
+          Flexible(
             child: ToggleSwitch(
-              activeText: activeText,
-              inactiveText: inactiveText,
-              activeColor: Theme.of(context).primaryColor,
-              isActive: status,
+              activeItem: ToggleSwitchItem(
+                text: activeText,
+                color: Theme.of(context).primaryColor,
+                value: activeValue,
+              ),
+              inactiveItem: ToggleSwitchItem(
+                text: inactiveText,
+                value: inactiveValue,
+              ),
+              isActive: isActive,
               onChanged: (value) => press(() => onChange(value)),
             ),
           ),

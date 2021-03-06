@@ -5,18 +5,20 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:photo_store/model/firebase_album.dart';
+import 'package:photo_store/model/firebase_file.dart';
 
 extension Count<E> on Iterable<E> {
   int count(bool test(E element)) => this.where(test).length;
 }
 
-extension EuropeanFormat on DateTime {
+extension DateTimeExtensions on DateTime {
   String toEuropeanFormat() {
     var day = '${this.day < 10 ? '0' : ''}${this.day}';
     var month = '${this.month < 10 ? '0' : ''}${this.month}';
@@ -27,6 +29,10 @@ extension EuropeanFormat on DateTime {
 
     return '{$day/$month/$year $hour:$min:$sec}';
   }
+
+  bool isSameDay(DateTime other) => year == other.year && month == other.month && day == other.day;
+
+  bool isNotSameDay(DateTime other) => !isSameDay(other);
 }
 
 extension MapExtension<A, B> on Map<A, B> {
@@ -68,6 +74,22 @@ extension ListExtension<T> on List<T> {
     var first = this.firstWhere(test, orElse: () => null);
     return first ?? await orElse();
   }
+}
+
+extension FirebaseAlbumList on List<FirebaseAlbum> {
+  List<FirebaseAlbum> ordered() => this..sort((a, b) => a.index.compareTo(b.index));
+
+  FirebaseAlbum findByName(String albumName) => this.firstWhere((album) => album.name == albumName);
+
+  Future<List<FirebaseFile>> filter(String label) async {
+    List<FirebaseFile> result = [];
+    await Future.forEach(this, (FirebaseAlbum album) async => result.addAll(await album.filter(label)));
+    return result;
+  }
+
+  List<Map<String, dynamic>> mapAll() => this.map((album) => album.toMap()).toList();
+
+  String printable() => '${this.map((album) => '${album.name}::${album.index}')}';
 }
 
 extension Exists on DocumentReference {

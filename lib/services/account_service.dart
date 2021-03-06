@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 07/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -18,13 +18,14 @@ import 'package:photo_store/services/secret_service.dart';
 class AccountService {
   static Account currentAccount;
 
-  static Future<AttemptResult> loginToFirebase() async {
+  static Future loginToFirebase() async {
     var user = await SecretService.firebaseAccount;
     var auth = FirebaseAuth.instance;
+    var result;
 
     try {
       await auth.signInWithEmailAndPassword(email: user.email, password: user.password);
-      return AttemptResult.success;
+      result = AttemptResult.success;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -35,7 +36,9 @@ class AccountService {
           break;
       }
 
-      return AttemptResult.fail;
+      result = AttemptResult.fail;
+    } finally {
+      logResult('Firebase login', result);
     }
   }
 

@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 11/02/2021
+ . Last modified : 15/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -27,7 +27,7 @@ class FirebaseAlbumService {
   static Future<List<FirebaseAlbum>> refresh() async => _albums = await fetchAllAlbums();
 
   /// Returns all firebaseFiles containing a given label
-  static Future<List<FirebaseFile>> filter(String label) async => _albums.mapAsync((album) => album.filter(label));
+  static Future<List<FirebaseFile>> filter(String label) async => _albums.filter(label);
 
   /// Load the list of all albums and files from firestore
   static Future<List<FirebaseAlbum>> fetchAllAlbums() async {
@@ -38,7 +38,7 @@ class FirebaseAlbumService {
     var albumNames = albums.map((album) => album.name).join((', '));
 
     logFetch('Loaded ${albums.length} albums from Firebase :: $albumNames');
-    return albums;
+    return albums.ordered();
   }
 
   /// Adds a firebaseFile to a remote firestore album
@@ -46,30 +46,42 @@ class FirebaseAlbumService {
     var albumName = savePath.directory;
     var fileName = savePath.fileName;
 
-    bool sameName(FirebaseAlbum album) => album.name == albumName;
-    Map albumToJson(FirebaseAlbum album) => album.toMap();
-
     if (_albums.contains(albumName)) {
-      _albums.firstWhere(sameName).addFile(fileName);
+      _albums.findByName(albumName).addFile(fileName);
     } else {
-      _albums.add(await createAlbum(albumName)
-        ..addFile(fileName));
+      var newAlbum = await createAlbum(albumName);
+      newAlbum.addFile(fileName);
+      _albums.add(newAlbum);
     }
 
-    var document = await getAlbumsDocument();
-    await document.update({FirebaseFields.albums: _albums.map(albumToJson).toList()});
-
+    await saveAlbums();
     logUpdate('Saved new file in $albumName :: $fileName');
   }
 
   static Future<FirebaseAlbum> createAlbum(String albumName) async {
     var document = await getAlbumsDocument();
-    var lastIndex = await document.getData(FirebaseFields.lastAlbumIndex, 0);
+    var albumCounts = await document.getData(FirebaseFields.albumsCount, 0);
 
-    var newIndex = lastIndex + 1;
+    await document.update({FirebaseFields.albumsCount: albumCounts + 1});
+    var newAlbum = FirebaseAlbum(albumName, albumCounts + 1, []);
 
-    await document.update({FirebaseFields.lastAlbumIndex: newIndex});
+    logDebug('Created new Album :: ${newAlbum.name}');
 
-    return FirebaseAlbum(albumName, newIndex, []);
+    return newAlbum;
+  }
+
+  static Future<void> saveAlbums([List<FirebaseAlbum> albums]) async {
+    if (albums != null) _albums = List.from(albums);
+
+    var document = await getAlbumsDocument();
+    _updateIndexes();
+    await document.update({FirebaseFields.albums: _albums.mapAll()});
+    logDebug('Saved album order new Album :: ${_albums.printable()}');
+  }
+
+  static void _updateIndexes() {
+    _albums
+      ..forEach((album) => album.index = _albums.indexOf(album))
+      ..ordered();
   }
 }

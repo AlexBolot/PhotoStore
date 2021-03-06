@@ -5,11 +5,12 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 1/20/21 1:01 AM
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 const double bubbleSize = 25;
@@ -17,44 +18,72 @@ const double textSize = 70;
 const double padding = 5;
 const double totalWidth = bubbleSize + textSize + padding * 2;
 
-class ToggleSwitch extends StatefulWidget {
-  final bool isActive;
-  final ValueChanged<bool> onChanged;
-  final Color activeColor;
-  final Color inactiveColor;
-  final String activeText;
-  final String inactiveText;
-  final Color activeTextColor;
-  final Color inactiveTextColor;
+class ToggleSwitchItem<T> {
+  Color color;
+  Color textColor;
+  T value;
+  String text;
 
-  const ToggleSwitch({
-    this.isActive,
-    this.onChanged,
-    this.activeColor,
-    this.inactiveColor = Colors.grey,
-    this.activeText = 'On',
-    this.inactiveText = 'Off',
-    this.activeTextColor = Colors.white70,
-    this.inactiveTextColor = Colors.white70,
-  });
+  ToggleSwitchItem({this.textColor, this.color, this.value, this.text});
+}
+
+class ToggleSwitch<T> extends StatefulWidget {
+  final bool isActive;
+  final ValueChanged<T> onChanged;
+  final ToggleSwitchItem<T> activeItem;
+  final ToggleSwitchItem<T> inactiveItem;
+
+  ToggleSwitch({
+    @required this.isActive,
+    @required this.onChanged,
+    @required this.activeItem,
+    @required this.inactiveItem,
+  }) {
+    assert(activeItem != null);
+    assert(inactiveItem != null);
+
+    this.activeItem.color ??= Colors.blueAccent;
+    this.activeItem.textColor ??= Colors.white;
+    this.activeItem.text ??= 'On';
+
+    this.inactiveItem.color ??= Colors.grey;
+    this.inactiveItem.textColor ??= Colors.white;
+    this.activeItem.text ??= 'Off';
+  }
 
   @override
   _ToggleSwitchState createState() => _ToggleSwitchState();
 }
 
-class _ToggleSwitchState extends State<ToggleSwitch> with SingleTickerProviderStateMixin {
-  Animation _circleAnimation;
+class _ToggleSwitchState<T> extends State<ToggleSwitch<T>> with SingleTickerProviderStateMixin {
+  Animation<Offset> _circleAnimation;
   AnimationController _animationController;
 
   @override
   void initState() {
+    const left = const Offset(0, 0.0);
+    const right = const Offset(2.9, 0.0);
+
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(seconds: 2));
-    _circleAnimation = AlignmentTween(
-            begin: widget.isActive ? Alignment.centerRight : Alignment.centerLeft,
-            end: widget.isActive ? Alignment.centerLeft : Alignment.centerRight)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.linear));
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _circleAnimation = Tween<Offset>(
+      begin: widget.isActive ? right : left,
+      end: widget.isActive ? left : right,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.linear,
+    ));
   }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  T getOtherValue() => widget.isActive ? widget.inactiveItem.value : widget.activeItem.value;
+
+  ToggleSwitchItem<T> get item => widget.isActive ? widget.activeItem : widget.inactiveItem;
 
   @override
   Widget build(BuildContext context) {
@@ -68,29 +97,25 @@ class _ToggleSwitchState extends State<ToggleSwitch> with SingleTickerProviderSt
             } else {
               _animationController.forward();
             }
-            widget.onChanged(!widget.isActive);
+
+            widget.onChanged(getOtherValue());
           },
           child: Container(
             height: 30.0,
             width: totalWidth,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                color: widget.isActive ? widget.activeColor : widget.inactiveColor),
+              borderRadius: BorderRadius.circular(20.0),
+              color: widget.isActive ? widget.activeItem.color : widget.inactiveItem.color,
+            ),
             padding: const EdgeInsets.all(padding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Stack(
               children: <Widget>[
                 ToggleSwitchText(
-                  display: widget.isActive,
-                  text: widget.activeText,
-                  color: widget.activeTextColor,
+                  text: item.text,
+                  color: item.textColor,
+                  alignment: widget.isActive ? Alignment.centerLeft : Alignment.centerRight,
                 ),
-                ToggleSwitchBubble(alignment: _circleAnimation.value),
-                ToggleSwitchText(
-                  display: !widget.isActive,
-                  text: widget.inactiveText,
-                  color: widget.inactiveTextColor,
-                ),
+                ToggleSwitchBubble(animation: _circleAnimation),
               ],
             ),
           ),
@@ -101,29 +126,29 @@ class _ToggleSwitchState extends State<ToggleSwitch> with SingleTickerProviderSt
 }
 
 class ToggleSwitchText extends StatelessWidget {
-  final display;
   final text;
   final color;
+  final alignment;
 
-  const ToggleSwitchText({
-    this.display,
-    this.text,
-    this.color,
-  });
+  const ToggleSwitchText({this.text, this.color, this.alignment});
 
   @override
   Widget build(BuildContext context) {
-    if (!display) return Container();
-
     return Container(
-      width: textSize,
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w800,
-            fontSize: 16.0,
+      width: totalWidth,
+      child: Align(
+        alignment: alignment,
+        child: Container(
+          width: textSize,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: color,
+                fontSize: 16.0,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ),
       ),
@@ -132,14 +157,14 @@ class ToggleSwitchText extends StatelessWidget {
 }
 
 class ToggleSwitchBubble extends StatelessWidget {
-  final AlignmentGeometry alignment;
+  final Animation<Offset> animation;
 
-  const ToggleSwitchBubble({this.alignment});
+  const ToggleSwitchBubble({Key key, this.animation}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment,
+    return SlideTransition(
+      position: animation,
       child: Container(
         width: bubbleSize,
         height: bubbleSize,
