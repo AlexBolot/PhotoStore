@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 12/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -68,29 +68,39 @@ class _FirebaseAlbumCardState extends State<FirebaseAlbumCard> {
           return Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: FileImage(thumbnail),
-                  fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () => press(() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => FirebaseAlbumView(widget.album),
+                  ),
+                );
+              }),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: FileImage(thumbnail),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  color: Colors.black87,
-                  width: double.maxFinite,
-                  child: FutureWidget<int>(
-                    future: widget.album.count,
-                    initialData: -1,
-                    builder: (count) {
-                      return Text(
-                        "${widget.album.name} ($count)",
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      );
-                    },
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    color: Colors.black87,
+                    width: double.maxFinite,
+                    child: FutureWidget<int>(
+                      future: widget.album.count,
+                      initialData: -1,
+                      builder: (count) {
+                        return Text(
+                          "${widget.album.name} ($count)",
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 15/02/2021
+ . Last modified : 16/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -20,6 +20,7 @@ import 'package:photo_store/services/cache_service.dart';
 import 'package:photo_store/services/firebase/firebase_label_service.dart';
 import 'package:photo_store/services/logging_service.dart';
 import 'package:photo_store/services/preference_service.dart';
+import 'package:photo_store/views/firebase/firebase_filtered_view.dart';
 import 'package:photo_store/views/login_view.dart';
 import 'package:photo_store/views/photo_grid_view.dart';
 
@@ -50,6 +51,7 @@ class PhotoStore extends StatelessWidget {
         LoginView.routeName: (context) => LoginView(title: applicationName),
         SplashScreen.routeName: (context) => buildSplashScreen(applicationName),
         PhotoGridView.routeName: (context) => PhotoGridView(),
+        FirebaseFilteredView.routeName: (context) => FirebaseFilteredView(),
       },
     );
   }

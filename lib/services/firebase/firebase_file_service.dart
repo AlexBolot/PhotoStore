@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 15/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -74,10 +74,15 @@ class FirebaseFileService {
     if (reset) {
       await document.update({FirebaseFields.lastAccess: null});
       logUpdate('reset ${FirebaseFields.lastAccess} for $fileName');
-    } else {
-      var newDate = DateTime.now();
-      await document.update({FirebaseFields.lastAccess: newDate});
-      logUpdate('saved ${FirebaseFields.lastAccess} ${newDate.toEuropeanFormat()} for $fileName');
+      return;
+    }
+
+    var previousAccess = await getLastAccess(fileName);
+    var now = DateTime.now();
+
+    if (previousAccess == null || previousAccess.isNotSameDay(now)) {
+      await document.update({FirebaseFields.lastAccess: now});
+      logUpdate('saved ${FirebaseFields.lastAccess} ${now.toEuropeanFormat()} for $fileName');
     }
   }
 }

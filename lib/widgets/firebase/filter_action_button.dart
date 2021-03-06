@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 09/02/2021
+ . Last modified : 06/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -39,7 +39,10 @@ class FilterActionButton extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var label = globalLabels[index];
                     return GestureDetector(
-                      onTap: () => onSelect(label),
+                      onTap: () {
+                        onSelect(label);
+                        Navigator.of(context).pop();
+                      },
                       child: Card(
                         child: Padding(
                           padding: EdgeInsets.all(16.0),

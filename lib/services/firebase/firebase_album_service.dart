@@ -5,7 +5,7 @@
  .  
  . As part of the PhotoStore project
  .  
- . Last modified : 14/02/2021
+ . Last modified : 15/02/2021
  .  
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -22,8 +22,6 @@ class FirebaseAlbumService {
 
   /// Returns the in-memory albums or loads from firestore if null
   static Future<List<FirebaseAlbum>> get albums async => _albums ??= await fetchAllAlbums();
-
-  static set albums(newList) => _albums = List.from(newList);
 
   /// Forces to reload the list of all albums and files
   static Future<List<FirebaseAlbum>> refresh() async => _albums = await fetchAllAlbums();
@@ -72,10 +70,13 @@ class FirebaseAlbumService {
     return newAlbum;
   }
 
-  static Future<void> saveAlbums() async {
+  static Future<void> saveAlbums([List<FirebaseAlbum> albums]) async {
+    if (albums != null) _albums = List.from(albums);
+
     var document = await getAlbumsDocument();
     _updateIndexes();
     await document.update({FirebaseFields.albums: _albums.mapAll()});
+    logDebug('Saved album order new Album :: ${_albums.printable()}');
   }
 
   static void _updateIndexes() {

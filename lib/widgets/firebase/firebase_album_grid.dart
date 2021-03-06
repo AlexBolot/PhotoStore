@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 15/02/2021
+ . Last modified : 16/02/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter_stash/flutter_stash.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/services/firebase/firebase_album_service.dart';
+import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/views/firebase/firebase_filtered_view.dart';
 import 'package:photo_store/widgets/firebase/filter_action_button.dart';
 import 'package:photo_store/widgets/firebase/firebase_album_card.dart';
@@ -37,6 +38,42 @@ class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
         );
       },
     );
+  }
+
+  List<FirebaseAlbum> handleDragAndDrop(oldIndex, newIndex, albums) {
+    switch (DragAndDropBehaviour.current) {
+      case DragAndDropBehaviour.reorder:
+        return albums = reorder(oldIndex, newIndex, albums);
+      case DragAndDropBehaviour.swap:
+        return albums = swap(oldIndex, newIndex, albums);
+      default:
+        return albums;
+    }
+  }
+
+  List<FirebaseAlbum> reorder(oldIndex, newIndex, albums) {
+    int startIndex = albums.indexOf(albums[oldIndex]);
+    int endIndex = albums.indexOf(albums[newIndex]);
+
+    if (startIndex > endIndex) {
+      for (int i = startIndex; i > endIndex; i--) {
+        swap(i, i - 1, albums);
+      }
+    } else {
+      for (int i = startIndex; i < endIndex; i++) {
+        swap(i, i + 1, albums);
+      }
+    }
+
+    return albums;
+  }
+
+  List<FirebaseAlbum> swap(oldIndex, newIndex, albums) {
+    var tmp = albums[oldIndex];
+    albums[oldIndex] = albums[newIndex];
+    albums[newIndex] = tmp;
+
+    return albums;
   }
 
   @override
@@ -78,26 +115,8 @@ class _FirebaseAlbumGridState extends State<FirebaseAlbumGrid> {
                 isCustomFeedback: true,
                 onWillAccept: (a, b) => true,
                 onReorder: (oldIndex, newIndex) {
-                  int startIndex = albums.indexOf(albums[oldIndex]);
-                  int endIndex = albums.indexOf(albums[newIndex]);
-
-                  swapIndex(a, b) {
-                    var tmp = albums[a];
-                    albums[a] = albums[b];
-                    albums[b] = tmp;
-                  }
-
-                  if (startIndex > endIndex) {
-                    for (int i = startIndex; i > endIndex; i--) {
-                      swapIndex(i, i - 1);
-                    }
-                  } else {
-                    for (int i = startIndex; i < endIndex; i++) {
-                      swapIndex(i, i + 1);
-                    }
-                  }
-
-                  FirebaseAlbumService.albums = albums;
+                  albums = handleDragAndDrop(oldIndex, newIndex, albums);
+                  FirebaseAlbumService.saveAlbums(albums);
                   setState(() {});
                 },
               ),

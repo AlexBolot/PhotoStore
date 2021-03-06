@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 15/02/2021
+ . Last modified : 06/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -76,19 +76,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
             inactiveValue: Source.localStorage,
             onChange: (value) => changeSource(value),
           ),
-          RadioItem(
-            text: 'Firebase',
-            value: Source.firebaseStorage,
-            groupValue: Source.current,
-            onChanged: (value) => changeSource(value),
-            onTap: () => changeSource(Source.firebaseStorage),
-          ),
-          RadioItem(
-            text: 'Local',
-            value: Source.localStorage,
-            groupValue: Source.current,
-            onChanged: (value) => changeSource(value),
-            onTap: () => changeSource(Source.localStorage),
+          ToggleItem<String>(
+            isActive: DragAndDropBehaviour.current == DragAndDropBehaviour.reorder,
+            title: 'Drag and Drop',
+            activeText: 'Réordonner',
+            activeValue: DragAndDropBehaviour.reorder,
+            inactiveText: 'Échanger',
+            inactiveValue: DragAndDropBehaviour.swap,
+            onChange: (value) => changeDragDropBehaviour(value),
           ),
           SimpleItem(
             icon: Icons.upload_sharp,
@@ -153,8 +148,8 @@ class ToggleItem<T> extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(title, style: TextStyle(fontSize: 18)),
-          Container(
+          Flexible(child: Text(title, style: TextStyle(fontSize: 18))),
+          Flexible(
             child: ToggleSwitch(
               activeItem: ToggleSwitchItem(
                 text: activeText,

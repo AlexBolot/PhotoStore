@@ -13,13 +13,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:photo_store/model/firebase_album.dart';
 import 'package:photo_store/model/firebase_file.dart';
-import 'package:photo_store/services/logging_service.dart';
 
 extension Count<E> on Iterable<E> {
   int count(bool test(E element)) => this.where(test).length;
 }
 
-extension EuropeanFormat on DateTime {
+extension DateTimeExtensions on DateTime {
   String toEuropeanFormat() {
     var day = '${this.day < 10 ? '0' : ''}${this.day}';
     var month = '${this.month < 10 ? '0' : ''}${this.month}';
@@ -30,6 +29,10 @@ extension EuropeanFormat on DateTime {
 
     return '{$day/$month/$year $hour:$min:$sec}';
   }
+
+  bool isSameDay(DateTime other) => year == other.year && month == other.month && day == other.day;
+
+  bool isNotSameDay(DateTime other) => !isSameDay(other);
 }
 
 extension MapExtension<A, B> on Map<A, B> {
@@ -86,9 +89,7 @@ extension FirebaseAlbumList on List<FirebaseAlbum> {
 
   List<Map<String, dynamic>> mapAll() => this.map((album) => album.toMap()).toList();
 
-  void print() {
-    logDebug('albums -> ${this.map((album) => '${album.name}::${album.index}')}');
-  }
+  String printable() => '${this.map((album) => '${album.name}::${album.index}')}';
 }
 
 extension Exists on DocumentReference {
