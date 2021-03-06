@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 11/02/2021
+ . Last modified : 06/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -53,7 +53,7 @@ class FirebaseLabelService {
   }
 
   static void addGlobalLabel(String label) {
-    _globalLabels.putIfAbsent(label, () => 0);
+    _globalLabels.add(label, 0);
     _globalLabels[label]++;
     getLabelsDocument().then((doc) => doc.update(_globalLabels));
   }
