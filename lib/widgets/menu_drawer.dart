@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 06/03/2021
+ . Last modified : 19/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -17,7 +17,7 @@ import 'package:photo_store/services/cache_service.dart';
 import 'package:photo_store/services/firebase/upload_service.dart';
 import 'package:photo_store/services/preference_service.dart';
 import 'package:photo_store/utils/global.dart';
-import 'package:photo_store/widgets/toggle_switch.dart';
+import 'package:photo_store/widgets/drop_down.dart';
 
 class MenuDrawer extends StatefulWidget {
   final Function updateParent;
@@ -34,19 +34,19 @@ class _MenuDrawerState extends State<MenuDrawer> {
     super.initState();
   }
 
-  refreshAndParent() {
+  refreshDrawerAndParent() {
     widget.updateParent();
     setState(() {});
   }
 
   changeSource(String value) {
     Source.current = value;
-    refreshAndParent();
+    refreshDrawerAndParent();
   }
 
   changeDragDropBehaviour(String value) {
     DragAndDropBehaviour.current = value;
-    refreshAndParent();
+    refreshDrawerAndParent();
   }
 
   @override
@@ -60,30 +60,24 @@ class _MenuDrawerState extends State<MenuDrawer> {
               color: Colors.blue,
             ),
             child: Text(
-              'Drawer Header',
+              "Paramètres de l'application",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
               ),
             ),
           ),
-          ToggleItem<String>(
-            isActive: Source.current == Source.firebaseStorage,
+          DropDownItem(
             title: 'Source des photos',
-            activeText: 'Firebase',
-            activeValue: Source.firebaseStorage,
-            inactiveText: 'Local',
-            inactiveValue: Source.localStorage,
-            onChange: (value) => changeSource(value),
+            values: Source.values,
+            selectedValue: Source.current,
+            onSelect: (value) => changeSource(value),
           ),
-          ToggleItem<String>(
-            isActive: DragAndDropBehaviour.current == DragAndDropBehaviour.reorder,
+          DropDownItem(
             title: 'Drag and Drop',
-            activeText: 'Réordonner',
-            activeValue: DragAndDropBehaviour.reorder,
-            inactiveText: 'Échanger',
-            inactiveValue: DragAndDropBehaviour.swap,
-            onChange: (value) => changeDragDropBehaviour(value),
+            values: DragAndDropBehaviour.values,
+            selectedValue: DragAndDropBehaviour.current,
+            onSelect: (value) => changeDragDropBehaviour(value),
           ),
           SimpleItem(
             icon: Icons.upload_sharp,
@@ -121,55 +115,6 @@ class SimpleItem extends StatelessWidget {
   }
 }
 
-class ToggleItem<T> extends StatelessWidget {
-  final String title;
-  final String activeText;
-  final String inactiveText;
-  final T activeValue;
-  final T inactiveValue;
-  final bool isActive;
-  final ValueChanged<T> onChange;
-
-  const ToggleItem({
-    @required this.title,
-    this.activeText,
-    this.inactiveText,
-    this.isActive = false,
-    this.onChange,
-    this.activeValue,
-    this.inactiveValue,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Flexible(child: Text(title, style: TextStyle(fontSize: 18))),
-          Flexible(
-            child: ToggleSwitch(
-              activeItem: ToggleSwitchItem(
-                text: activeText,
-                color: Theme.of(context).primaryColor,
-                value: activeValue,
-              ),
-              inactiveItem: ToggleSwitchItem(
-                text: inactiveText,
-                value: inactiveValue,
-              ),
-              isActive: isActive,
-              onChanged: (value) => press(() => onChange(value)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class RadioItem extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final String value;
@@ -189,6 +134,44 @@ class RadioItem extends StatelessWidget {
         onChanged: onChanged,
       ),
       onTap: () => press(() => onTap()),
+    );
+  }
+}
+
+class DropDownItem extends StatelessWidget {
+  final String title;
+  final List<String> values;
+  final String selectedValue;
+  final ValueChanged onSelect;
+
+  const DropDownItem({this.title = '', this.onSelect, this.values, this.selectedValue});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            fit: FlexFit.tight,
+            child: Text(title ?? ''),
+          ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: Chip(
+              backgroundColor: Colors.grey[200],
+              labelPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              label: DropDownList(
+                values: values,
+                value: selectedValue,
+                onSelect: onSelect,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
