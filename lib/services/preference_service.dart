@@ -5,7 +5,7 @@
  .
  . As part of the PhotoStore project
  .
- . Last modified : 15/02/2021
+ . Last modified : 08/03/2021
  .
  . Contact : contact.alexandre.bolot@gmail.com
  .............................................................................*/
@@ -23,31 +23,29 @@ class Preference {
 class DragAndDropBehaviour {
   static const String swap = 'swap';
   static const String reorder = 'reorder';
-  static List<String> _values = [swap, reorder];
-
+  static List<String> values = [swap, reorder];
   static String _current = swap;
 
   static String get current => _current;
 
-  static set current(String source) {
-    _current = source;
-    setPreference(Preference.source, _current);
+  static set current(String behaviour) {
+    _current = behaviour;
+    setPreference(Preference.dragAndDropBehaviour, _current);
   }
 
   static Future<void> loadFromPreference() async {
     _current = await getPreference(Preference.dragAndDropBehaviour, orDefault: _current);
   }
 
-  static int indexOf(String source) => _values.indexOf(source);
+  static int indexOf(String behaviour) => values.indexOf(behaviour);
 
-  static String fromIndex(int index) => _values.elementAt(index);
+  static String fromIndex(int index) => values.elementAt(index);
 }
 
 class Source {
   static const String localStorage = 'local';
   static const String firebaseStorage = 'firebase';
-  static List<String> _values = [localStorage, firebaseStorage];
-
+  static List<String> values = [localStorage, firebaseStorage];
   static String _current = firebaseStorage;
 
   static String get current => _current;
@@ -61,9 +59,9 @@ class Source {
     _current = await getPreference(Preference.source, orDefault: _current);
   }
 
-  static int indexOf(String source) => _values.indexOf(source);
+  static int indexOf(String source) => values.indexOf(source);
 
-  static String fromIndex(int index) => _values.elementAt(index);
+  static String fromIndex(int index) => values.elementAt(index);
 }
 
 /// Global photo source shared through the App (Local or Firebase)
